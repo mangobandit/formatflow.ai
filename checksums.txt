@@ -1,0 +1,9 @@
+# FormatFlow Studio checksums
+
+Generated: 2026-05-11
+
+SHA256  FormatFlowStudioInstaller-v7.exe
+4C5A0FD338736D45E846C2CF57D71970879ADEFFBA48740A44DDD4DD87728F0A  FormatFlowStudioInstaller-v7.exe
+
+SHA256  downloads/FormatFlow-Studio-2-Day-Trial.exe
+4C5A0FD338736D45E846C2CF57D71970879ADEFFBA48740A44DDD4DD87728F0A  downloads/FormatFlow-Studio-2-Day-Trial.exe
