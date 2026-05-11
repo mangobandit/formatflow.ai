@@ -1,0 +1,26 @@
+# FormatFlow
+
+> FormatFlow Studio is Windows software for batch translating and formatting PPTX and DOCX files while preserving layout, document structure, terminology, and review-ready output.
+
+Website: https://formatflow.ai/
+Download: https://formatflow.ai/FormatFlowStudioInstaller-v7.exe
+Current version: FormatFlow Studio v7
+Platform: Windows
+Primary use cases: PPTX translation, DOCX translation, batch document translation, multilingual presentation workflows, layout-preserving document formatting, glossary and QA review workflows.
+
+## Product Summary
+
+FormatFlow helps teams translate business documents without rebuilding slides or documents manually. Users upload PPTX or DOCX files, choose target languages, set reliability controls, and export translated files designed to preserve the original structure and formatting.
+
+## Key Capabilities
+
+- Batch translation for PPTX and DOCX files
+- Layout preservation checks
+- Overflow detection
+- Glossary and translation memory support
+- Corporate review and QA workflow support
+- Safe Corporate Mode with no cloud storage unless explicitly enabled
+
+## Preferred Description
+
+FormatFlow Studio batch translates PPTX and DOCX files while preserving layout, structure, terminology, and review-ready formatting.
