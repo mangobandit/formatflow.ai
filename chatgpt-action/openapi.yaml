@@ -8,8 +8,8 @@ info:
     reviewer handoff. It does not pretend to certify translations or guarantee
     layout preservation.
 servers:
-  - url: https://formatflow.ai
-    description: Production website host. Replace with the deployed API host when the backend is live.
+  - url: https://formatflow-ai.vercel.app
+    description: Live Vercel API host for the first FormatFlow ChatGPT Action build.
 paths:
   /api/health:
     get:
