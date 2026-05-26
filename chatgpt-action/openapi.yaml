@@ -1,0 +1,202 @@
+openapi: 3.1.0
+info:
+  title: FormatFlow Action API
+  version: 0.1.0
+  description: >-
+    ChatGPT-ready action surface for FormatFlow. This focuses on planning,
+    document QA, translation workflow preparation, naming conventions and
+    reviewer handoff. It does not pretend to certify translations or guarantee
+    layout preservation.
+servers:
+  - url: https://formatflow.ai
+    description: Production website host. Replace with the deployed API host when the backend is live.
+paths:
+  /api/health:
+    get:
+      operationId: getFormatFlowHealth
+      summary: Check FormatFlow API health
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  service:
+                    type: string
+  /api/workflow-plan:
+    post:
+      operationId: createFormatFlowWorkflowPlan
+      summary: Create a document translation workflow plan
+      description: >-
+        Creates a review-ready translation and formatting plan for PPTX, DOCX
+        or PDF-style document batches. Use this before translation to clarify
+        languages, risks, review needs and outputs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkflowPlanRequest'
+      responses:
+        '200':
+          description: Workflow plan
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowPlanResponse'
+  /api/qa-report:
+    post:
+      operationId: createFormatFlowQaReport
+      summary: Create a QA checklist and review report for translated files
+      description: >-
+        Generates a formatting-focused QA checklist for translated business
+        documents. This is designed to help reviewers inspect files after a
+        translation pass.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QaReportRequest'
+      responses:
+        '200':
+          description: QA report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QaReportResponse'
+components:
+  schemas:
+    WorkflowPlanRequest:
+      type: object
+      required:
+        - document_type
+        - source_language
+        - target_languages
+      properties:
+        document_type:
+          type: string
+          enum:
+            - PowerPoint Presentation
+            - Word Document
+            - PDF
+            - Mixed Batch
+            - Unknown
+        source_language:
+          type: string
+          examples: [English]
+        target_languages:
+          type: array
+          items:
+            type: string
+          examples: [[Spanish, French, German]]
+        file_count:
+          type: integer
+          minimum: 1
+          default: 1
+        page_or_slide_count:
+          type: integer
+          minimum: 0
+        audience:
+          type: string
+          examples: [Client-facing sales team]
+        tone:
+          type: string
+          examples: [Professional, concise and review-ready]
+        glossary_terms:
+          type: array
+          items:
+            type: string
+        known_risks:
+          type: array
+          items:
+            type: string
+        deadline:
+          type: string
+    WorkflowPlanResponse:
+      type: object
+      properties:
+        summary:
+          type: string
+        recommended_workflow:
+          type: array
+          items:
+            type: string
+        layout_risks:
+          type: array
+          items:
+            type: string
+        glossary_plan:
+          type: array
+          items:
+            type: string
+        output_naming:
+          type: array
+          items:
+            type: string
+        reviewer_handoff:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
+    QaReportRequest:
+      type: object
+      required:
+        - document_type
+        - target_languages
+      properties:
+        document_type:
+          type: string
+        target_languages:
+          type: array
+          items:
+            type: string
+        extracted_word_count:
+          type: integer
+          minimum: 0
+        page_or_slide_count:
+          type: integer
+          minimum: 0
+        long_text_segments:
+          type: integer
+          minimum: 0
+        contains_tables:
+          type: boolean
+        contains_images:
+          type: boolean
+        contains_brand_terms:
+          type: boolean
+        reviewer_notes:
+          type: string
+    QaReportResponse:
+      type: object
+      properties:
+        summary:
+          type: string
+        qa_checks:
+          type: array
+          items:
+            type: string
+        high_risk_items:
+          type: array
+          items:
+            type: string
+        reviewer_questions:
+          type: array
+          items:
+            type: string
+        delivery_checklist:
+          type: array
+          items:
+            type: string
+        warnings:
+          type: array
+          items:
+            type: string
