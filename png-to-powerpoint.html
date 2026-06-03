@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PNG to PowerPoint Builder | FormatFlow</title>
+  <meta name="description" content="Create a new PowerPoint deck by inserting sorted PNG exports into an existing PPTX file. Files are processed locally in your browser." />
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <style>
+    :root{--bg:#050808;--panel:#07100f;--line:rgba(128,255,229,.18);--text:#f8fff9;--muted:#cfe3de;--mint:#5eead4;--mint2:#dff7b2;--gold:#ffd166;--ink:#07100f;--soft:#f4f8f6}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#050808,#0d1616 62%,#f4f8f6 62%,#fff);color:var(--text);line-height:1.55}
+    a{color:inherit;text-decoration:none}
+    .container{width:min(1120px,calc(100% - 32px));margin:auto}
+    header{padding:28px 0}
+    .brand{display:inline-flex;align-items:center;gap:12px;font-weight:900;font-size:1.2rem}
+    .mark{width:42px;height:42px;border-radius:14px;background:#050808;display:grid;place-items:center;border:1px solid var(--line);color:var(--gold)}
+    .hero{padding:52px 0 28px}
+    .pill{display:inline-flex;border:1px solid var(--line);background:rgba(255,255,255,.08);border-radius:999px;padding:8px 13px;color:#dffbf5;font-weight:800;margin-bottom:22px}
+    h1{font-size:clamp(2.6rem,5.5vw,5rem);line-height:1;letter-spacing:-.045em;max-width:880px;margin-bottom:22px}
+    .lead{font-size:1.12rem;color:#d7eee7;max-width:800px;margin-bottom:28px}
+    .tool{padding:36px 0 84px}
+    .shell{display:grid;grid-template-columns:minmax(330px,.9fr) minmax(430px,1.1fr);gap:20px;align-items:start}
+    .panel,.output{border:1px solid var(--line);border-radius:28px;background:rgba(255,255,255,.075);padding:24px;box-shadow:0 26px 80px rgba(0,0,0,.25)}
+    .panel h2,.output h2{font-size:1.15rem;margin-bottom:14px}
+    .upload{display:block;border:1px dashed rgba(128,255,229,.45);border-radius:20px;background:rgba(255,255,255,.065);padding:24px;text-align:center;margin:0 0 14px;cursor:pointer}
+    .upload:hover{background:rgba(94,234,212,.08);border-color:rgba(128,255,229,.7)}
+    .upload strong{display:block;font-size:1.05rem;margin-bottom:8px}
+    .upload span{display:block;color:#cfe3de;font-size:.95rem;max-width:430px;margin:auto}
+    .upload input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}
+    .file-list{display:grid;gap:10px;margin:12px 0 22px}
+    .file-item{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(0,0,0,.2);color:#eafff9}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;padding:14px 22px;font-weight:900;cursor:pointer;transition:.2s}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{width:100%;background:linear-gradient(135deg,var(--mint),var(--mint2) 52%,var(--gold));color:var(--ink)}
+    .btn-light{background:#fff;color:#111827;box-shadow:0 18px 45px rgba(17,24,39,.16)}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .note{color:#bfffea;background:rgba(94,234,212,.09);border:1px solid rgba(94,234,212,.22);border-radius:16px;padding:14px;margin-top:18px;font-size:.94rem}
+    .status{border:1px solid rgba(255,255,255,.12);border-radius:20px;background:var(--panel);padding:18px;margin-bottom:16px}
+    .status h2{margin-bottom:8px}
+    .status p,.card p{color:#cfe3de}
+    .progress{height:10px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:14px 0}
+    .progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--mint2),var(--gold));transition:width .4s}
+    .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .card{border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.07);padding:16px}
+    .card h3{margin-bottom:8px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .steps{background:#fff;color:#111827;padding:70px 0}
+    .steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .step{border:1px solid #e3ece8;border-radius:22px;padding:24px;background:#fff}
+    .step p{color:#5d667c}
+    footer{background:#050808;color:#b9cfc9;border-top:1px solid var(--line);padding:30px 0}
+    @media(max-width:900px){.shell,.steps-grid{grid-template-columns:1fr}.hero{padding-top:28px}.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header><div class="container"><a class="brand" href="/"><span class="mark">FF</span>FormatFlow</a></div></header>
+<main>
+  <section class="hero"><div class="container"><div class="pill">PNG to PowerPoint Builder</div><h1>Insert PNG exports into an existing PowerPoint deck.</h1><p class="lead">Choose a PPTX file and a folder of PNG files. FormatFlow sorts the PNGs naturally, places PNG 1 on slide 1, scales each image to the largest size inside the slide, and downloads a new deck without overwriting your original.</p></div></section>
+  <section class="tool"><div class="container shell"><div class="panel"><h2>PowerPoint deck</h2><label class="upload" for="deckFile"><strong>Choose a PPTX file</strong><span>Select the existing deck that already has the slides you want to fill.</span><input id="deckFile" type="file" accept=".pptx,application/vnd.openxmlformats-officedocument.presentationml.presentation" /></label><div class="file-list" id="deckList"><div class="file-item"><span>No deck selected</span><span>Waiting</span></div></div><h2>PNG folder</h2><label class="upload" for="pngFiles"><strong>Choose PNG folder or files</strong><span>Chrome and Edge can select a folder. You can also select multiple PNG files.</span><input id="pngFiles" type="file" accept=".png,image/png" multiple webkitdirectory directory /></label><div class="file-list" id="pngList"><div class="file-item"><span>No PNG files selected</span><span>Waiting</span></div></div><button class="btn btn-primary" id="generateDeck" type="button">Generate Deck</button><p class="note">Files are processed locally in your browser. The new PPTX downloads as a separate file.</p></div><div class="output"><div class="status"><h2 id="statusTitle">Ready to build</h2><p id="statusText">Choose a PPTX deck and PNG folder, then click Generate Deck.</p><div class="progress"><span id="progressBar"></span></div></div><div class="grid" id="resultGrid"><div class="card"><h3>Deck</h3><p>Waiting for PPTX</p></div><div class="card"><h3>PNGs</h3><p>Waiting for PNG files</p></div><div class="card"><h3>Placement</h3><p>Centered and scaled inside each slide.</p></div><div class="card"><h3>Output</h3><p>New deck download appears here.</p></div></div><div class="actions"><button class="btn btn-light" id="downloadDeck" type="button" disabled>Download Generated Deck</button></div></div></div></section>
+  <section class="steps"><div class="container"><div class="steps-grid"><article class="step"><h2>1. Choose deck</h2><p>Start with a PowerPoint file that already has the number of slides you need.</p></article><article class="step"><h2>2. Choose PNGs</h2><p>Use names like 001.png, 002.png, or slide_001.png for predictable order.</p></article><article class="step"><h2>3. Download result</h2><p>The generated deck keeps the original file untouched and inserts each PNG in order.</p></article></div></div></section>
+</main>
+<footer><div class="container">FormatFlow - document finishing tools for presentation and file workflows.</div></footer>
+<script>
+  const deckFileInput = document.getElementById('deckFile');
+  const pngFilesInput = document.getElementById('pngFiles');
+  const deckList = document.getElementById('deckList');
+  const pngList = document.getElementById('pngList');
+  const generateDeck = document.getElementById('generateDeck');
+  const downloadDeck = document.getElementById('downloadDeck');
+  const statusTitle = document.getElementById('statusTitle');
+  const statusText = document.getElementById('statusText');
+  const progressBar = document.getElementById('progressBar');
+  const resultGrid = document.getElementById('resultGrid');
+  let selectedDeck = null;
+  let selectedPngs = [];
+  let outputBlob = null;
+  let outputName = '';
+
+  function readableSize(bytes){ if(!bytes) return '0 MB'; return `${(bytes / 1024 / 1024).toFixed(2)} MB`; }
+  function escapeHtml(value){ return String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char])); }
+  function escapeXml(value){ return String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[char])); }
+  function sortName(file){ return file.webkitRelativePath || file.name; }
+  function naturalCompare(a, b){ return sortName(a).localeCompare(sortName(b), undefined, {numeric:true, sensitivity:'base'}); }
+  function setProgress(value){ progressBar.style.width = `${value}%`; }
+  function getXmlAttr(tag, name){ const match = tag.match(new RegExp(`\\b${name}="([^"]+)"`)); return match ? match[1] : ''; }
+  function normaliseZipPath(path){ const parts=[]; path.split('/').forEach(part=>{ if(!part || part === '.') return; if(part === '..') parts.pop(); else parts.push(part); }); return parts.join('/'); }
+  function pptTargetPath(target){ return target.startsWith('/') ? target.slice(1) : normaliseZipPath(`ppt/${target}`); }
+  function outputDeckName(file){ return file.name.replace(/\.pptx$/i, '') + '_with_pngs.pptx'; }
+  function downloadBlob(blob, fileName){ const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = fileName; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url); }
+  function renderResult(deckMessage, pngMessage, outputMessage){ resultGrid.innerHTML = `<div class="card"><h3>Deck</h3><p>${escapeHtml(deckMessage)}</p></div><div class="card"><h3>PNGs</h3><p>${escapeHtml(pngMessage)}</p></div><div class="card"><h3>Placement</h3><p>Centered and scaled to fit fully inside each slide.</p></div><div class="card"><h3>Output</h3><p>${escapeHtml(outputMessage)}</p></div>`; }
+  function renderPngPreview(){ const rows = selectedPngs.slice(0, 6).map(file => `<div class="file-item"><span>${escapeHtml(sortName(file))}</span><span>${readableSize(file.size)}</span></div>`).join(''); const extra = selectedPngs.length > 6 ? `<div class="file-item"><span>${selectedPngs.length - 6} more PNG files</span><span>Sorted</span></div>` : ''; pngList.innerHTML = rows + extra; }
+  function relationshipTags(xml){ return [...xml.matchAll(/<Relationship\b[^>]*>/g)].map(match => match[0]); }
+  function nextRelationshipId(xml){ const used = new Set(relationshipTags(xml).map(tag => getXmlAttr(tag, 'Id'))); let max = 0; used.forEach(id => { const match = /^rId(\d+)$/i.exec(id); if(match) max = Math.max(max, Number(match[1])); }); let candidate = max + 1; while(used.has(`rId${candidate}`)) candidate += 1; return `rId${candidate}`; }
+  function nextShapeId(slideXml){ const ids = [...slideXml.matchAll(/<p:cNvPr\b[^>]*\bid="(\d+)"/g)].map(match => Number(match[1])); return Math.max(1, ...ids) + 1; }
+  function slideRelsPath(slidePath){ const fileName = slidePath.split('/').pop(); return slidePath.replace(`/slides/${fileName}`, `/slides/_rels/${fileName}.rels`); }
+  function emptyRelationshipsXml(){ return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>'; }
+  function addRelationship(xml, relationshipId, mediaName){ const relationship = `<Relationship Id="${relationshipId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="../media/${escapeXml(mediaName)}"/>`; return xml.replace('</Relationships>', `${relationship}</Relationships>`); }
+  async function ensurePngContentType(zip){ const file = zip.file('[Content_Types].xml'); if(!file) throw new Error('The PPTX package is missing [Content_Types].xml.'); const xml = await file.async('string'); if(!/Extension="png"/i.test(xml)){ zip.file('[Content_Types].xml', xml.replace('</Types>', '<Default Extension="png" ContentType="image/png"/></Types>')); } }
+  async function getSlideInfo(zip){ const presentationFile = zip.file('ppt/presentation.xml'); const relsFile = zip.file('ppt/_rels/presentation.xml.rels'); if(!presentationFile || !relsFile) throw new Error('The selected PPTX does not contain a readable slide list.'); const presentationXml = await presentationFile.async('string'); const relsXml = await relsFile.async('string'); const sizeTag = presentationXml.match(/<p:sldSz\b[^>]*>/)?.[0] || ''; const slideSize = {cx:Number(getXmlAttr(sizeTag, 'cx')) || 9144000, cy:Number(getXmlAttr(sizeTag, 'cy')) || 5143500}; const targets = new Map(); relationshipTags(relsXml).forEach(tag => { const id = getXmlAttr(tag, 'Id'); const type = getXmlAttr(tag, 'Type'); const target = getXmlAttr(tag, 'Target'); if(id && target && /\/slide$/i.test(type)) targets.set(id, pptTargetPath(target)); }); const slidePaths = [...presentationXml.matchAll(/<p:sldId\b[^>]*>/g)].map(match => targets.get(getXmlAttr(match[0], 'r:id'))).filter(Boolean); if(!slidePaths.length) throw new Error('No slides were found in the selected PPTX.'); return {slidePaths, slideSize}; }
+  function uniqueMediaPath(zip, index){ let counter = 0; while(true){ const suffix = counter ? `_${counter}` : ''; const path = `ppt/media/formatflow_png_${String(index + 1).padStart(3, '0')}${suffix}.png`; if(!zip.file(path)) return path; counter += 1; } }
+  function readImageSize(file){ return new Promise((resolve, reject) => { const url = URL.createObjectURL(file); const image = new Image(); image.onload = () => { URL.revokeObjectURL(url); resolve({width:image.naturalWidth, height:image.naturalHeight}); }; image.onerror = () => { URL.revokeObjectURL(url); reject(new Error(`Could not read image size for ${file.name}.`)); }; image.src = url; }); }
+  function pictureXml({relationshipId, shapeId, pngFile, left, top, width, height}){ return `<p:pic><p:nvPicPr><p:cNvPr id="${shapeId}" name="${escapeXml(pngFile.name)}"/><p:cNvPicPr><a:picLocks noChangeAspect="1"/></p:cNvPicPr><p:nvPr/></p:nvPicPr><p:blipFill><a:blip r:embed="${relationshipId}"/><a:stretch><a:fillRect/></a:stretch></p:blipFill><p:spPr><a:xfrm><a:off x="${left}" y="${top}"/><a:ext cx="${width}" cy="${height}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></p:spPr></p:pic>`; }
+  function ensureSlideNamespaces(slideXml){ let output = slideXml; if(!/xmlns:r=/.test(output)) output = output.replace('<p:sld ', '<p:sld xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" '); if(!/xmlns:a=/.test(output)) output = output.replace('<p:sld ', '<p:sld xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" '); return output; }
+  async function addPngToSlide(zip, slidePath, pngFile, slideSize, index){ const slideFile = zip.file(slidePath); if(!slideFile) throw new Error(`Slide file not found: ${slidePath}`); let slideXml = ensureSlideNamespaces(await slideFile.async('string')); const relsPath = slideRelsPath(slidePath); const relsXml = zip.file(relsPath) ? await zip.file(relsPath).async('string') : emptyRelationshipsXml(); const relationshipId = nextRelationshipId(relsXml); const shapeId = nextShapeId(slideXml); const mediaPath = uniqueMediaPath(zip, index); const mediaName = mediaPath.split('/').pop(); const imageSize = await readImageSize(pngFile); const scale = Math.min(slideSize.cx / imageSize.width, slideSize.cy / imageSize.height); const width = Math.round(imageSize.width * scale); const height = Math.round(imageSize.height * scale); const left = Math.round((slideSize.cx - width) / 2); const top = Math.round((slideSize.cy - height) / 2); if(!slideXml.includes('</p:spTree>')) throw new Error(`Slide XML cannot be updated: ${slidePath}`); slideXml = slideXml.replace('</p:spTree>', `${pictureXml({relationshipId, shapeId, pngFile, left, top, width, height})}</p:spTree>`); zip.file(mediaPath, await pngFile.arrayBuffer()); zip.file(relsPath, addRelationship(relsXml, relationshipId, mediaName)); zip.file(slidePath, slideXml); }
+  async function createDeckWithPngs(deckFile, pngFiles){ if(!window.JSZip) throw new Error('The file builder library did not load. Refresh the page and try again.'); const zip = await JSZip.loadAsync(deckFile); await ensurePngContentType(zip); const {slidePaths, slideSize} = await getSlideInfo(zip); if(pngFiles.length > slidePaths.length) throw new Error(`Found ${pngFiles.length} PNG files, but the deck only has ${slidePaths.length} slides.`); for(let index = 0; index < pngFiles.length; index += 1){ setProgress(Math.round(20 + ((index + 1) / pngFiles.length) * 65)); await addPngToSlide(zip, slidePaths[index], pngFiles[index], slideSize, index); } return zip.generateAsync({type:'blob', mimeType:'application/vnd.openxmlformats-officedocument.presentationml.presentation'}); }
+
+  deckFileInput.addEventListener('change', event => { const file = event.target.files && event.target.files[0]; outputBlob = null; downloadDeck.disabled = true; if(!file) return; if(!file.name.toLowerCase().endsWith('.pptx')){ selectedDeck = null; deckList.innerHTML = `<div class="file-item"><span>${escapeHtml(file.name)}</span><span>Unsupported</span></div>`; statusTitle.textContent = 'Unsupported deck'; statusText.textContent = 'Please choose a PPTX file.'; return; } selectedDeck = file; deckList.innerHTML = `<div class="file-item"><span>${escapeHtml(file.name)}</span><span>${readableSize(file.size)}</span></div>`; statusTitle.textContent = 'Deck selected'; statusText.textContent = 'Choose the PNG folder or files next.'; renderResult(file.name, selectedPngs.length ? `${selectedPngs.length} PNG files selected` : 'Waiting for PNG files', 'Not generated yet'); setProgress(10); });
+  pngFilesInput.addEventListener('change', event => { outputBlob = null; downloadDeck.disabled = true; selectedPngs = Array.from(event.target.files || []).filter(file => file.name.toLowerCase().endsWith('.png')).sort(naturalCompare); if(!selectedPngs.length){ pngList.innerHTML = '<div class="file-item"><span>No PNG files selected</span><span>Waiting</span></div>'; statusTitle.textContent = 'Choose PNG files'; statusText.textContent = 'Select a folder or multiple PNG files.'; return; } renderPngPreview(); statusTitle.textContent = 'PNG files selected'; statusText.textContent = `${selectedPngs.length} PNG file${selectedPngs.length === 1 ? '' : 's'} ready in natural sort order.`; renderResult(selectedDeck ? selectedDeck.name : 'Waiting for PPTX', `${selectedPngs.length} PNG files selected`, 'Not generated yet'); setProgress(selectedDeck ? 20 : 10); });
+  generateDeck.addEventListener('click', async () => { try{ if(!selectedDeck){ statusTitle.textContent = 'Choose a deck first'; statusText.textContent = 'Select an existing PPTX file before generating.'; return; } if(!selectedPngs.length){ statusTitle.textContent = 'Choose PNG files first'; statusText.textContent = 'Select a PNG folder or multiple PNG files before generating.'; return; } generateDeck.disabled = true; downloadDeck.disabled = true; outputBlob = null; outputName = outputDeckName(selectedDeck); statusTitle.textContent = 'Building deck locally'; statusText.textContent = 'Opening the PPTX package and inserting PNG files into slides.'; setProgress(20); outputBlob = await createDeckWithPngs(selectedDeck, selectedPngs); setProgress(100); statusTitle.textContent = 'Deck generated'; statusText.textContent = 'Download the new PPTX file. Your original deck is unchanged.'; renderResult(selectedDeck.name, `${selectedPngs.length} PNG files inserted`, outputName); downloadDeck.disabled = false; } catch(error){ console.error(error); statusTitle.textContent = 'Deck generation failed'; statusText.textContent = error.message || 'The deck could not be generated.'; setProgress(0); } finally{ generateDeck.disabled = false; } });
+  downloadDeck.addEventListener('click', () => { if(outputBlob) downloadBlob(outputBlob, outputName); });
+</script>
+</body>
+</html>
