@@ -97,6 +97,7 @@
   const translatePreview = document.getElementById('translatePreview');
   const translateResult = document.getElementById('translateResult');
   let selectedFile = null;
+  const API_BASE = location.hostname.endsWith('vercel.app') ? '' : 'https://formatflow-ai.vercel.app';
   let lastReport = null;
 
   function track(event, props){ try{ window.plausible && window.plausible(event, props ? {props} : undefined); }catch(e){} }
@@ -149,7 +150,7 @@
     translateResult.innerHTML = '<div class="privacy-note" style="margin-top:18px">Contacting the FormatFlow translation preview service…</div>';
     track('Translate Preview', {type: lastReport.kind});
     try{
-      const res = await fetch('/api/translate-demo', {
+      const res = await fetch(API_BASE + '/api/translate-demo', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body: JSON.stringify({
