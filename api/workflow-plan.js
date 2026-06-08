@@ -1,13 +1,12 @@
-import { asArray, baseWarnings, documentLabel, handleOptions, requireMethod, sendJson } from "./_shared.js";
+import { asArray, baseWarnings, documentLabel, guard, sendJson } from "./_shared.js";
 
 function outputExamples(documentType, targetLanguages) {
   const extension = /word/i.test(documentType) ? "docx" : /pdf/i.test(documentType) ? "pdf" : "pptx";
   return targetLanguages.map((language) => `ProjectName_${language.replace(/\s+/g, "")}_ReviewReady.${extension}`);
 }
 
-export default function handler(req, res) {
-  if (handleOptions(req, res)) return;
-  if (!requireMethod(req, res, "POST")) return;
+export default async function handler(req, res) {
+  if (!(await guard(req, res, { method: "POST", limit: 60, windowMs: 60_000 }))) return;
 
   const body = req.body || {};
   const documentType = documentLabel(body.document_type || body.documentType || "Unknown");
@@ -21,9 +20,7 @@ export default function handler(req, res) {
   const knownRisks = asArray(body.known_risks || body.knownRisks);
 
   if (!targetLanguages.length) {
-    sendJson(res, 400, {
-      error: "At least one target language is required.",
-    });
+    sendJson(res, 400, { error: "At least one target language is required." }, req);
     return;
   }
 
@@ -70,5 +67,5 @@ export default function handler(req, res) {
       "Confirm names, dates, prices, legal wording and technical terms manually.",
     ],
     warnings: baseWarnings(),
-  });
+  }, req);
 }

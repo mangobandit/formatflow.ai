@@ -4,7 +4,6 @@
 
 Website: https://formatflow.ai/
 Download: https://formatflow.ai/FormatFlowStudioInstaller.exe
-Current version: FormatFlow Studio
 Platform: Windows
 Primary use cases: PPTX translation, DOCX translation, batch document translation, multilingual presentation workflows, layout-preserving document formatting, glossary and QA review workflows.
 

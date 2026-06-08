@@ -18,10 +18,6 @@ Please **do not open a public GitHub issue** for security vulnerabilities.
 
 Preferred method: use GitHub's **Private vulnerability reporting** / **Report a vulnerability** option for this repository.
 
-If private vulnerability reporting is unavailable, contact: `security@formatflow.ai`.
-
-> Before publishing this policy, make sure `security@formatflow.ai` exists and is monitored. If it does not exist yet, remove the email line and use GitHub private vulnerability reporting only.
-
 When reporting a vulnerability, please include:
 
 - A clear description of the issue

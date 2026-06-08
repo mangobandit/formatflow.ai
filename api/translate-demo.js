@@ -1,16 +1,6 @@
+import { cleanString, guard, sendJson } from "./_shared.js";
+
 const OPENAI_URL = "https://api.openai.com/v1/responses";
-
-function sendJson(res, statusCode, payload) {
-  res.statusCode = statusCode;
-  res.setHeader("Content-Type", "application/json");
-  res.setHeader("Cache-Control", "no-store");
-  res.end(JSON.stringify(payload));
-}
-
-function cleanString(value, maxLength = 8000) {
-  if (typeof value !== "string") return "";
-  return value.replace(/\s+/g, " ").trim().slice(0, maxLength);
-}
 
 function extractText(output) {
   if (typeof output.output_text === "string") return output.output_text;
@@ -37,16 +27,16 @@ function safeJsonParse(text) {
   }
 }
 
-module.exports = async function handler(req, res) {
-  if (req.method !== "POST") {
-    return sendJson(res, 405, { error: "Method not allowed. Use POST." });
+export default async function handler(req, res) {
+  if (!(await guard(req, res, { method: "POST", limit: 8, windowMs: 10 * 60_000, requireKnownOrigin: true, maxBytes: 64 * 1024 }))) {
+    return;
   }
 
   if (!process.env.OPENAI_API_KEY) {
     return sendJson(res, 500, {
       error: "OPENAI_API_KEY is not configured.",
       nextStep: "Add OPENAI_API_KEY in Vercel Project Settings > Environment Variables, then redeploy.",
-    });
+    }, req);
   }
 
   try {
@@ -60,11 +50,11 @@ module.exports = async function handler(req, res) {
       : [];
 
     if (!sourceText || sourceText.length < 20) {
-      return sendJson(res, 400, { error: "Not enough extracted text to translate. Try a file with selectable text." });
+      return sendJson(res, 400, { error: "Not enough extracted text to translate. Try a file with selectable text." }, req);
     }
 
     if (!targetLanguages.length) {
-      return sendJson(res, 400, { error: "Select at least one target language." });
+      return sendJson(res, 400, { error: "Select at least one target language." }, req);
     }
 
     const prompt = `You are FormatFlow, a careful document translation preview assistant. Use only the supplied document text. Do not invent missing sections. Return only valid JSON matching this structure: {"summary":"...","translations":[{"language":"...","translatedPreview":"...","notes":["..."]}],"qaChecks":["..."],"nextSteps":["..."]}.
@@ -77,19 +67,28 @@ Tone and glossary notes: ${toneNotes}
 Source text preview:
 ${sourceText}`;
 
-    const response = await fetch(OPENAI_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-        input: prompt,
-        temperature: 0.2,
-        max_output_tokens: 3000,
-      }),
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 25_000);
+
+    let response;
+    try {
+      response = await fetch(OPENAI_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+          input: prompt,
+          temperature: 0.2,
+          max_output_tokens: 3000,
+        }),
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     const data = await response.json();
 
@@ -97,7 +96,7 @@ ${sourceText}`;
       return sendJson(res, response.status, {
         error: "OpenAI translation preview failed.",
         details: data.error?.message || "Unknown API error.",
-      });
+      }, req);
     }
 
     const text = extractText(data);
@@ -109,14 +108,17 @@ ${sourceText}`;
         translations: targetLanguages.map((language) => ({ language, translatedPreview: text.slice(0, 1200), notes: ["Review the preview before using it in a client document."] })),
         qaChecks: ["Preview generated from extracted text", "Verify terminology and formatting before final use"],
         nextSteps: ["Use the Windows app for full DOCX/PPTX export", "Review formatting after translation"],
-      });
+      }, req);
     }
 
-    return sendJson(res, 200, parsed);
+    return sendJson(res, 200, parsed, req);
   } catch (error) {
+    if (error.name === "AbortError") {
+      return sendJson(res, 504, { error: "Translation preview timed out. Try a shorter document." }, req);
+    }
     return sendJson(res, 500, {
       error: "Translation preview failed.",
       details: error.message || "Unknown server error.",
-    });
+    }, req);
   }
-};
+}

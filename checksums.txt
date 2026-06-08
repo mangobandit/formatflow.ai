@@ -1,2 +1,6 @@
-﻿FormatFlow Studio installer checksum
+# FormatFlow Studio — installer checksums
+# Regenerate after each build and paste the SHA-256 below + into index.html.
+# Windows:  certutil -hashfile FormatFlowStudioInstaller.exe SHA256
+# macOS/Linux:  shasum -a 256 FormatFlowStudioInstaller.exe
+
 FormatFlowStudioInstaller.exe  SHA256: 8CC873FCEBBF72C49454C8638CC80BE6BD5790ADE08CFDD554D91BB4374DE20F
