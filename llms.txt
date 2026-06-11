@@ -18,7 +18,8 @@ FormatFlow helps teams translate business documents without rebuilding slides or
 - Overflow detection
 - Glossary and translation memory support
 - Corporate review and QA workflow support
-- Safe Corporate Mode with no cloud storage unless explicitly enabled
+- Safe Corporate Mode: an optional translation setting for conservative, business-appropriate phrasing
+- Local-first by design: documents are processed on your machine and never touch FormatFlow servers; translation runs under your own API key
 
 ## Preferred Description
 

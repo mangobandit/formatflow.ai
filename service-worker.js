@@ -3,7 +3,7 @@
 //   * Static assets (HTML, icons, manifest): stale-while-revalidate.
 //   * API routes (/api/*): never cached — always network.
 //   * Navigations offline: fall back to the cached home page.
-const VERSION = "ff-v1";
+const VERSION = "ff-v2";
 const STATIC_CACHE = `${VERSION}-static`;
 const PRECACHE = [
   "/",
