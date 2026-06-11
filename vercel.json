@@ -1,5 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/translate-powerpoint.html", "destination": "/translate-powerpoint", "permanent": true },
+    { "source": "/translate-word.html", "destination": "/translate-word", "permanent": true }
+  ],
+  "rewrites": [
+    { "source": "/translate-powerpoint", "destination": "/translate-powerpoint.html" },
+    { "source": "/translate-word", "destination": "/translate-word.html" }
+  ],
   "headers": [
     {
       "source": "/(.*)",
