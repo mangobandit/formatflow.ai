@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Translate Word Documents and Keep the Formatting | FormatFlow Studio</title>
+  <meta name="description" content="Batch translate DOCX files while keeping headings, styles, tables, headers and footers intact. Glossaries keep terminology consistent, overflow is flagged for review, and it all runs locally on Windows." />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="theme-color" content="#050808" />
+  <link rel="canonical" href="https://formatflow.ai/translate-word" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="FormatFlow" />
+  <meta property="og:title" content="Translate Word Documents and Keep the Formatting" />
+  <meta property="og:description" content="Batch DOCX translation that preserves document structure, flags layout risks for review and runs locally on your machine." />
+  <meta property="og:url" content="https://formatflow.ai/translate-word" />
+  <meta property="og:image" content="https://formatflow.ai/og-image.png" />
+
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"SoftwareApplication","name":"FormatFlow Studio","operatingSystem":"Windows","applicationCategory":"BusinessApplication","url":"https://formatflow.ai/translate-word","downloadUrl":"https://formatflow.ai/FormatFlowStudioInstaller.exe","description":"FormatFlow Studio batch translates DOCX files while preserving document structure, terminology and review-ready formatting.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+    {"@type":"Question","name":"How do I translate a Word document without losing the formatting?","acceptedAnswer":{"@type":"Answer","text":"Use a tool that works inside the document structure instead of copy-pasting text. FormatFlow Studio opens your DOCX locally, translates the text with layout preservation on, keeps headings, styles, tables, headers and footers in place, and flags layout risks for review before you deliver."}},
+    {"@type":"Question","name":"Why does translating a Word document break the formatting?","acceptedAnswer":{"@type":"Answer","text":"Translated text is usually longer than the source — German typically adds 35% or more — so paragraphs reflow, tables stretch and page breaks move. Generic translators swap the words without managing the layout. FormatFlow translates within the existing document structure and reports what needs a human look."}},
+    {"@type":"Question","name":"Does my document get uploaded to the cloud?","acceptedAnswer":{"@type":"Answer","text":"No. FormatFlow Studio runs on your Windows machine and your files never touch our servers. Translation runs under your own OpenAI API key, sent directly from your computer to the provider, only when you run a batch."}},
+    {"@type":"Question","name":"Can I batch translate multiple Word documents at once?","acceptedAnswer":{"@type":"Answer","text":"Yes. Drop a whole folder of DOCX and PPTX files, pick one or more target languages, and FormatFlow translates the batch and groups the output files by language with review-ready names. There are no per-document caps."}},
+    {"@type":"Question","name":"How much does it cost?","acceptedAnswer":{"@type":"Answer","text":"The Windows download is free and a short trial unlocks everything. Translation uses your own OpenAI API key, so you pay the provider directly for model usage — FormatFlow shows an estimated cost before you run a batch and lets you set a spending cap."}},
+    {"@type":"Question","name":"Will terminology stay consistent across contracts, policies and proposals?","acceptedAnswer":{"@type":"Answer","text":"Yes. Add protected terms to the glossary and approved phrasings to the translation memory, and FormatFlow applies them across every document in the batch — across languages and projects."}}
+  ]}
+  </script>
+
+  <script defer data-domain="formatflow.ai" src="https://plausible.io/js/script.tagged-events.js"></script>
+  <script>window.plausible = window.plausible || function(){ (window.plausible.q = window.plausible.q || []).push(arguments); };</script>
+
+  <style>
+    :root{--bg:#050808;--ink:#07100f;--mint:#5eead4;--mint2:#dff7b2;--gold:#ffd166;--soft:#f4f8f6;--line:#dbe8e4;--muted:#d7eee7}
+    *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#111827;background:#fff;line-height:1.6}a{text-decoration:none;color:inherit}
+    .wrap{width:min(1080px,calc(100% - 32px));margin:auto}
+    .hero{background:linear-gradient(135deg,#050808,#0d1616);color:#fff;padding:72px 0 80px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:900;margin-bottom:48px}.mark{width:42px;height:42px;border-radius:14px;background:#050808;display:grid;place-items:center;border:1px solid rgba(128,255,229,.2);color:var(--gold)}
+    h1{font-size:clamp(2.5rem,5.5vw,4.4rem);line-height:1.02;letter-spacing:-.05em;max-width:880px;margin-bottom:22px}
+    .grad{background:linear-gradient(120deg,#fff,var(--mint) 42%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{font-size:1.16rem;color:var(--muted);max-width:740px;margin-bottom:28px}
+    .actions{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:16px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;padding:14px 22px;font-weight:900;transition:.2s;white-space:nowrap;cursor:pointer}.btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:linear-gradient(135deg,var(--mint),var(--mint2) 52%,var(--gold));color:var(--ink)}
+    .btn-ghost{background:rgba(255,255,255,.1);border:1px solid rgba(128,255,229,.18);color:#fff}
+    .trustline{color:#9fd9c9;font-size:.9rem;font-weight:700}
+    .section{padding:72px 0}.soft{background:var(--soft)}.dark{background:var(--bg);color:#fff}
+    .kicker{color:#0f766e;font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:900;margin-bottom:12px}.dark .kicker{color:var(--mint)}
+    h2{font-size:clamp(1.9rem,3.8vw,3rem);line-height:1.05;letter-spacing:-.04em;margin-bottom:16px}
+    .copy{color:#5d667c;max-width:760px;margin-bottom:34px;font-size:1.06rem}.dark .copy{color:#cfe3de}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .card{border:1px solid var(--line);border-radius:20px;padding:24px;background:#fff}.card h3{margin-bottom:8px;font-size:1.12rem}.card p{color:#5d667c;font-size:.97rem}
+    .stat{font-size:2rem;font-weight:900;color:#0f766e;margin-bottom:6px}
+    .cite{font-size:.82rem;color:#94a3b8;margin-top:10px}.cite a{color:#0f766e;font-weight:700}
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .step{background:#07100f;color:#fff;border-radius:20px;padding:24px;min-height:170px}.step h3{font-size:1.05rem;margin-bottom:8px}.step p{color:#c7deda;font-size:.95rem}
+    .keep{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 28px;list-style:none;max-width:820px}
+    .keep li{padding-left:26px;position:relative;color:#334155}.keep li:before{content:"✓";position:absolute;left:0;color:#0f766e;font-weight:900}
+    .local-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .local-card{background:rgba(255,255,255,.07);border:1px solid rgba(128,255,229,.16);border-radius:20px;padding:22px}.local-card h3{font-size:1.08rem;margin:10px 0 8px}.local-card p{color:#c7deda;font-size:.95rem}.local-icon{font-size:1.4rem}
+    details{border:1px solid var(--line);border-radius:16px;background:#fff;padding:18px 20px;margin-bottom:12px}
+    summary{font-weight:800;cursor:pointer;font-size:1.02rem}details p{color:#5d667c;margin-top:10px;max-width:820px}
+    .cta{background:var(--bg);color:#fff;padding:84px 0;text-align:center}.cta p{color:#d2e8e2;font-size:1.1rem;max-width:700px;margin:0 auto 26px}
+    footer{background:var(--bg);color:#b9cfc9;border-top:1px solid rgba(128,255,229,.1);padding:28px 0}
+    .footer{display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}
+    .footlinks{display:flex;gap:18px;flex-wrap:wrap;font-size:.92rem;font-weight:700}.footlinks a:hover{color:#fff}
+    @media(max-width:880px){.grid,.steps,.local-strip{grid-template-columns:1fr 1fr}}
+    @media(max-width:620px){.grid,.steps,.local-strip,.keep{grid-template-columns:1fr}.hero{padding:52px 0 60px}}
+  </style>
+</head>
+<body>
+<main>
+  <section class="hero"><div class="wrap">
+    <a class="brand" href="/"><span class="mark">FF</span>FormatFlow</a>
+    <h1>Translate Word documents and <span class="grad">keep the formatting.</span></h1>
+    <p class="lead">FormatFlow Studio batch translates DOCX files while preserving headings, styles, tables, headers and footers. Layout risks are flagged for your review — and it all runs locally on your Windows machine.</p>
+    <div class="actions"><a class="btn btn-primary" href="/#demo">Try the Online Tester</a><a class="btn btn-ghost plausible-event-name=Download" href="/FormatFlowStudioInstaller.exe" download>Download for Windows</a></div>
+    <p class="trustline">Local-first · your files never touch our servers · translation runs under your own API key</p>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="kicker">The Problem</div>
+    <h2>Translation reflows documents because translated text is longer.</h2>
+    <p class="copy">Word documents look simple until the text grows. Translations rarely match the source length, so paragraphs reflow, tables stretch, page breaks drift and the headers, footers and numbering you set up carefully stop lining up. Generic translators swap the words and leave the cleanup to you.</p>
+    <div class="grid">
+      <article class="card"><div class="stat">+35%</div><h3>German runs longer</h3><p>German and Dutch translations typically add 35% or more to English text length — enough to push tables, callouts and page breaks out of place.</p><p class="cite">Source: <a href="https://www.argotranslation.com/blog/text-expansion-during-translation" rel="noopener">Argo Translation</a></p></article>
+      <article class="card"><div class="stat">+200–300%</div><h3>Short strings expand most</h3><p>Headings, labels and table cells can expand by 200–300% in translation — exactly the elements that anchor a document's layout.</p><p class="cite">Source: <a href="https://www.w3.org/International/articles/article-text-size" rel="noopener">W3C, "Text size in translation"</a></p></article>
+      <article class="card"><div class="stat">Review</div><h3>The new bottleneck</h3><p>Machine translation handles the words. What still costs hours is checking structure, terminology and layout on every page — the part FormatFlow is built for.</p></article>
+    </div>
+  </div></section>
+
+  <section class="section soft"><div class="wrap">
+    <div class="kicker">How It Works</div>
+    <h2>From source document to translated document in four steps.</h2>
+    <div class="steps">
+      <article class="step"><h3>1. Drop your DOCX files</h3><p>Add one document or a whole folder. PPTX files can join the same batch.</p></article>
+      <article class="step"><h3>2. Choose languages</h3><p>Select one or more target languages — including Arabic, Chinese, French, German and Spanish.</p></article>
+      <article class="step"><h3>3. Set your controls</h3><p>Layout preservation, overflow detection, adapt-text-to-fit, glossary, translation memory, model choice and a cost cap.</p></article>
+      <article class="step"><h3>4. Review and export</h3><p>Check flagged items in QA Review, then export translated, review-ready files grouped by language.</p></article>
+    </div>
+  </div></section>
+
+  <section class="section"><div class="wrap">
+    <div class="kicker">What's Preserved</div>
+    <h2>The document you translated still reads like your document.</h2>
+    <p class="copy">FormatFlow translates the text inside the existing document structure instead of rebuilding it, so the things that take longest to fix by hand stay where they were.</p>
+    <ul class="keep">
+      <li>Headings, styles and section structure</li>
+      <li>Tables and lists</li>
+      <li>Headers and footers</li>
+      <li>Glossary terms and product names</li>
+      <li>Consistent phrasing via translation memory</li>
+      <li>Review-ready file naming per language</li>
+    </ul>
+  </div></section>
+
+  <section class="section dark"><div class="wrap">
+    <div class="kicker">Why FormatFlow</div>
+    <h2>Local-first, with rules you set.</h2>
+    <div class="local-strip">
+      <article class="local-card"><div class="local-icon">🔒</div><h3>Your document stays on your machine</h3><p>Files are opened, checked and rebuilt locally — they never touch our servers. Translation runs under your own OpenAI API key, only when you run it. Built for contracts, policies and client proposals.</p></article>
+      <article class="local-card"><div class="local-icon">🎛️</div><h3>Parameters you control</h3><p>Tone preset, industry, your own client brief, glossary and memory, adapt-text-to-fit on or off, and a cap on estimated API cost. Nothing is decided for you.</p></article>
+      <article class="local-card"><div class="local-icon">📋</div><h3>Review-first layout checks</h3><p>When translated text threatens the layout, FormatFlow flags it. You review a short list and approve — nothing is changed silently.</p></article>
+    </div>
+  </div></section>
+
+  <section class="section soft"><div class="wrap">
+    <div class="kicker">FAQ</div>
+    <h2>Translating Word documents, answered.</h2>
+    <details><summary>How do I translate a Word document without losing the formatting?</summary><p>Use a tool that works inside the document structure instead of copy-pasting text. FormatFlow Studio opens your DOCX locally, translates with layout preservation on, keeps headings, styles, tables, headers and footers in place, and flags layout risks for review before you deliver.</p></details>
+    <details><summary>Why does translating a Word document break the formatting?</summary><p>Translated text is usually longer than the source — German typically adds 35% or more — so paragraphs reflow, tables stretch and page breaks move. Generic translators swap the words without managing the layout. FormatFlow translates within the existing document structure and reports what needs a human look.</p></details>
+    <details><summary>Does my document get uploaded to the cloud?</summary><p>No. FormatFlow Studio runs on your Windows machine and your files never touch our servers. Translation runs under your own OpenAI API key, sent directly from your computer to the provider, only when you run a batch.</p></details>
+    <details><summary>Can I batch translate multiple Word documents at once?</summary><p>Yes. Drop a whole folder of DOCX and PPTX files, pick one or more target languages, and FormatFlow translates the batch and groups the output files by language with review-ready names. There are no per-document caps.</p></details>
+    <details><summary>How much does it cost?</summary><p>The Windows download is free and a short trial unlocks everything. Translation uses your own OpenAI API key, so you pay the provider directly for model usage — FormatFlow shows an estimated cost before you run a batch and lets you set a spending cap.</p></details>
+    <details><summary>Will terminology stay consistent across contracts, policies and proposals?</summary><p>Yes. Add protected terms to the glossary and approved phrasings to the translation memory, and FormatFlow applies them across every document in the batch — across languages and projects.</p></details>
+  </div></section>
+
+  <section class="cta"><div class="wrap">
+    <h2>Test it with a real document.</h2>
+    <p>Upload a DOCX to the free online tester for an instant structure and QA check — or download FormatFlow Studio and translate the whole batch.</p>
+    <div class="actions" style="justify-content:center"><a class="btn btn-primary" href="/#demo">Try the Online Tester</a><a class="btn btn-ghost plausible-event-name=Download" href="/FormatFlowStudioInstaller.exe" download>Download for Windows</a></div>
+  </div></section>
+</main>
+<footer><div class="wrap footer">
+  <div class="brand" style="margin:0"><span class="mark">FF</span>FormatFlow</div>
+  <nav class="footlinks"><a href="/">Home</a><a href="/translate-powerpoint">Translate PowerPoint</a><a href="/formatflow-studio.html">FormatFlow Studio</a><a href="/#demo">Online Tester</a><a href="/privacy.html">Privacy</a></nav>
+</div></footer>
+</body>
+</html>
