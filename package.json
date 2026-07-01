@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "start": "vercel dev",
-    "test": "node --test"
+    "test": "node --test",
+    "e2e": "playwright test"
   },
-  "dependencies": {}
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
 }
