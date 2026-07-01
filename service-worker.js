@@ -3,11 +3,16 @@
 //   * Static assets (HTML, icons, manifest): stale-while-revalidate.
 //   * API routes (/api/*): never cached — always network.
 //   * Navigations offline: fall back to the cached home page.
-const VERSION = "ff-v3";
+const VERSION = "ff-v4";
 const STATIC_CACHE = `${VERSION}-static`;
 const PRECACHE = [
   "/",
   "/index.html",
+  "/translate-powerpoint",
+  "/translate-word",
+  "/assets/site.css",
+  "/assets/app.js",
+  "/assets/vendor/jszip.min.js",
   "/manifest.webmanifest",
   "/icon-192.png",
   "/icon-512.png",
@@ -40,10 +45,13 @@ self.addEventListener("fetch", (event) => {
   // Don't try to cache cross-origin (CDN/analytics) — let the network handle it.
   if (url.origin !== self.location.origin) return;
 
-  // Navigations: network first, fall back to cached shell when offline.
+  // Navigations: network first, fall back to the cached copy of that page,
+  // then to the cached home shell when offline.
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() => caches.match("/index.html").then((r) => r || caches.match("/")))
+      fetch(request).catch(() =>
+        caches.match(url.pathname).then((page) => page || caches.match("/index.html").then((r) => r || caches.match("/")))
+      )
     );
     return;
   }

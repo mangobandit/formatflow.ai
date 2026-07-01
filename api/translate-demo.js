@@ -1,38 +1,36 @@
 import { cleanString, guard, sendJson } from "./_shared.js";
+import { openAIConfigured, openAIJson } from "./_openai.js";
 
-const OPENAI_URL = "https://api.openai.com/v1/responses";
-
-function extractText(output) {
-  if (typeof output.output_text === "string") return output.output_text;
-  const parts = [];
-  for (const item of output.output || []) {
-    for (const content of item.content || []) {
-      if (content.type === "output_text" && content.text) parts.push(content.text);
-    }
-  }
-  return parts.join("\n");
-}
-
-function safeJsonParse(text) {
-  try {
-    return JSON.parse(text);
-  } catch {
-    const match = text.match(/\{[\s\S]*\}/);
-    if (match) {
-      try {
-        return JSON.parse(match[0]);
-      } catch {}
-    }
-    return null;
-  }
-}
+const SCHEMA = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    summary: { type: "string" },
+    translations: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          language: { type: "string" },
+          translatedPreview: { type: "string" },
+          notes: { type: "array", items: { type: "string" } },
+        },
+        required: ["language", "translatedPreview", "notes"],
+      },
+    },
+    qaChecks: { type: "array", items: { type: "string" } },
+    nextSteps: { type: "array", items: { type: "string" } },
+  },
+  required: ["summary", "translations", "qaChecks", "nextSteps"],
+};
 
 export default async function handler(req, res) {
   if (!(await guard(req, res, { method: "POST", limit: 8, windowMs: 10 * 60_000, requireKnownOrigin: true, maxBytes: 64 * 1024 }))) {
     return;
   }
 
-  if (!process.env.OPENAI_API_KEY) {
+  if (!openAIConfigured()) {
     return sendJson(res, 500, {
       error: "OPENAI_API_KEY is not configured.",
       nextStep: "Add OPENAI_API_KEY in Vercel Project Settings > Environment Variables, then redeploy.",
@@ -57,7 +55,7 @@ export default async function handler(req, res) {
       return sendJson(res, 400, { error: "Select at least one target language." }, req);
     }
 
-    const prompt = `You are FormatFlow, a careful document translation preview assistant. Use only the supplied document text. Do not invent missing sections. Return only valid JSON matching this structure: {"summary":"...","translations":[{"language":"...","translatedPreview":"...","notes":["..."]}],"qaChecks":["..."],"nextSteps":["..."]}.
+    const prompt = `You are FormatFlow, a careful document translation preview assistant. Use only the supplied document text. Do not invent missing sections. Produce one translation entry per target language, practical QA checks and next steps.
 
 File name: ${fileName}
 Document type: ${documentType}
@@ -67,51 +65,14 @@ Tone and glossary notes: ${toneNotes}
 Source text preview:
 ${sourceText}`;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 25_000);
+    const result = await openAIJson({ prompt, schemaName: "translation_preview", schema: SCHEMA });
 
-    let response;
-    try {
-      response = await fetch(OPENAI_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-        body: JSON.stringify({
-          model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-          input: prompt,
-          temperature: 0.2,
-          max_output_tokens: 3000,
-        }),
-        signal: controller.signal,
-      });
-    } finally {
-      clearTimeout(timeout);
+    if (!result.ok) {
+      const status = result.status >= 400 && result.status < 600 ? result.status : 502;
+      return sendJson(res, status, { error: "OpenAI translation preview failed.", details: result.error }, req);
     }
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      return sendJson(res, response.status, {
-        error: "OpenAI translation preview failed.",
-        details: data.error?.message || "Unknown API error.",
-      }, req);
-    }
-
-    const text = extractText(data);
-    const parsed = safeJsonParse(text);
-
-    if (!parsed) {
-      return sendJson(res, 200, {
-        summary: "Translation preview generated, but the response was not structured JSON.",
-        translations: targetLanguages.map((language) => ({ language, translatedPreview: text.slice(0, 1200), notes: ["Review the preview before using it in a client document."] })),
-        qaChecks: ["Preview generated from extracted text", "Verify terminology and formatting before final use"],
-        nextSteps: ["Use the Windows app for full DOCX/PPTX export", "Review formatting after translation"],
-      }, req);
-    }
-
-    return sendJson(res, 200, parsed, req);
+    return sendJson(res, 200, result.json, req);
   } catch (error) {
     if (error.name === "AbortError") {
       return sendJson(res, 504, { error: "Translation preview timed out. Try a shorter document." }, req);

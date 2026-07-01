@@ -14,6 +14,7 @@ FormatFlow helps teams translate business documents without rebuilding slides or
 ## Key Capabilities
 
 - Batch translation for PPTX and DOCX files
+- Free online tester at https://formatflow.ai/#demo: analyses PPTX, DOCX and PDF in the browser and can translate smaller PPTX/DOCX files with the layout kept
 - Layout preservation checks
 - Overflow detection
 - Glossary and translation memory support
