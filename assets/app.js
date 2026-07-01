@@ -85,7 +85,7 @@ function selectedLanguages(){ return Array.from(document.querySelectorAll('.lang
 function escapeHtml(value){ return String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char])); }
 function setProgress(value){ progressBar.style.width = `${value}%`; }
 function normaliseText(text){ return text.replace(/\s+/g,' ').trim(); }
-function decodeXml(value){ return value.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'"); }
+function decodeXml(value){ return value.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&amp;/g,'&'); }
 function encodeXml(value){ return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;'); }
 function xmlToTexts(xml){ const decoded = decodeXml(xml); const matches = [...decoded.matchAll(/<(?:a|w):t[^>]*>([\s\S]*?)<\/(?:a|w):t>/g)].map(m => normaliseText(m[1])).filter(Boolean); return matches; }
 function docxPartNames(zip){ return Object.keys(zip.files).filter(name => /^word\/(document|header\d+|footer\d+)\.xml$/i.test(name)); }

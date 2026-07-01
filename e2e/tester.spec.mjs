@@ -55,6 +55,9 @@ test("round-trip translate & download rebuilds the PPTX with translations", asyn
   // & must survive the decode → translate → re-encode round trip.
   expect(slide1).toContain("[ES] Quarterly results &amp; outlook");
   expect(slide1).toContain("[ES] Contact: sales@example.com");
+  // A literal &lt; in the source (&amp;lt; in raw XML) must not be double-unescaped
+  // into a real < on the way through (CodeQL js/double-escaping).
+  expect(slide1).toContain("[ES] Escaped literal: &amp;lt;tag&amp;gt;");
   const slide2 = await zip.file("ppt/slides/slide2.xml").async("string");
   expect(slide2).toContain("[ES] Thank you");
   await expect(page.locator("#translateResult")).toContainText("sample_SP.pptx");
