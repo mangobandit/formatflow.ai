@@ -2,8 +2,11 @@
 // Strategy:
 //   * Static assets (HTML, icons, manifest): stale-while-revalidate.
 //   * API routes (/api/*): never cached — always network.
+//   * Installer downloads (*.exe): never cached — always network.
 //   * Navigations offline: fall back to the cached home page.
-const VERSION = "ff-v3";
+// Bump VERSION on release: activate() drops every cache from an older version,
+// so returning visitors stop being served assets from a previous deploy.
+const VERSION = "ff-v4";
 const STATIC_CACHE = `${VERSION}-static`;
 const PRECACHE = [
   "/",
@@ -36,6 +39,11 @@ self.addEventListener("fetch", (event) => {
 
   // Never cache API calls.
   if (url.pathname.startsWith("/api/")) return;
+
+  // Never cache installer downloads. They are multi-megabyte binaries, so
+  // storing them evicts the small assets the cache exists for, and a stale
+  // copy would defeat the SHA-256 we publish for the current build.
+  if (url.pathname.endsWith(".exe")) return;
 
   // Don't try to cache cross-origin (CDN/analytics) — let the network handle it.
   if (url.origin !== self.location.origin) return;
