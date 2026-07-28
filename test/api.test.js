@@ -14,6 +14,7 @@ import {
 } from "../api/_shared.js";
 import qaReport from "../api/qa-report.js";
 import workflowPlan from "../api/workflow-plan.js";
+import { MODEL_CHOICES, DEFAULT_MODEL_KEY, resolveModel } from "../api/translate-demo.js";
 
 function mockRes() {
   return {
@@ -119,4 +120,45 @@ test("workflow-plan produces naming examples per language", async () => {
   assert.equal(res.statusCode, 200);
   assert.equal(res.body.output_naming.length, 2);
   assert.ok(res.body.output_naming[0].endsWith(".docx"));
+});
+
+test("resolveModel maps menu keys to model ids", () => {
+  delete process.env.OPENAI_MODEL;
+  delete process.env.OPENAI_MODEL_QUALITY;
+  delete process.env.OPENAI_MODEL_LATEST;
+  assert.equal(resolveModel("fast"), "gpt-4o-mini");
+  assert.equal(resolveModel("quality"), "gpt-4o");
+  assert.equal(resolveModel("latest"), "gpt-5.6");
+});
+
+test("resolveModel falls back to the default for unknown or hostile input", () => {
+  delete process.env.OPENAI_MODEL;
+  // A caller must never be able to choose an arbitrary model with our API key.
+  for (const value of [undefined, null, "", "  ", "o1-pro", "../../admin", 42, {}, []]) {
+    assert.equal(resolveModel(value), "gpt-4o-mini");
+  }
+});
+
+test("resolveModel accepts keys case-insensitively and trimmed", () => {
+  delete process.env.OPENAI_MODEL_LATEST;
+  assert.equal(resolveModel(" LATEST "), "gpt-5.6");
+  assert.equal(resolveModel("Quality"), "gpt-4o");
+});
+
+test("resolveModel honours env overrides for each choice", () => {
+  process.env.OPENAI_MODEL_LATEST = "gpt-5.6-preview";
+  process.env.OPENAI_MODEL_QUALITY = "gpt-4.1";
+  process.env.OPENAI_MODEL = "gpt-4o-mini-2024";
+  assert.equal(resolveModel("latest"), "gpt-5.6-preview");
+  assert.equal(resolveModel("quality"), "gpt-4.1");
+  assert.equal(resolveModel("fast"), "gpt-4o-mini-2024");
+  delete process.env.OPENAI_MODEL_LATEST;
+  delete process.env.OPENAI_MODEL_QUALITY;
+  delete process.env.OPENAI_MODEL;
+});
+
+test("every model menu key is exposed with a label", () => {
+  assert.deepEqual(Object.keys(MODEL_CHOICES), ["fast", "quality", "latest"]);
+  assert.equal(MODEL_CHOICES.latest.label, "ChatGPT 5.6");
+  assert.ok(DEFAULT_MODEL_KEY in MODEL_CHOICES);
 });

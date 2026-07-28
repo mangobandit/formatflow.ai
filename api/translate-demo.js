@@ -2,6 +2,24 @@ import { cleanString, guard, sendJson } from "./_shared.js";
 
 const OPENAI_URL = "https://api.openai.com/v1/responses";
 
+// The client sends a menu KEY, never a raw model string, so a caller cannot
+// point our API key at an arbitrary model. Each key resolves to an id here.
+//
+// "latest" is overridable via OPENAI_MODEL_LATEST: set it in Vercel to correct
+// the id without a code change if the published name differs from the default.
+export const MODEL_CHOICES = {
+  fast: { label: "GPT-4o mini", id: () => process.env.OPENAI_MODEL || "gpt-4o-mini" },
+  quality: { label: "GPT-4o", id: () => process.env.OPENAI_MODEL_QUALITY || "gpt-4o" },
+  latest: { label: "ChatGPT 5.6", id: () => process.env.OPENAI_MODEL_LATEST || "gpt-5.6" },
+};
+
+export const DEFAULT_MODEL_KEY = "fast";
+
+export function resolveModel(key) {
+  const choice = MODEL_CHOICES[typeof key === "string" ? key.trim().toLowerCase() : ""];
+  return (choice || MODEL_CHOICES[DEFAULT_MODEL_KEY]).id();
+}
+
 function extractText(output) {
   if (typeof output.output_text === "string") return output.output_text;
   const parts = [];
@@ -79,7 +97,7 @@ ${sourceText}`;
           Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
-          model: process.env.OPENAI_MODEL || "gpt-4o-mini",
+          model: resolveModel(body.model),
           input: prompt,
           temperature: 0.2,
           max_output_tokens: 3000,
@@ -93,6 +111,15 @@ ${sourceText}`;
     const data = await response.json();
 
     if (!response.ok) {
+      // An unknown model is a configuration problem, not a bad document, so say
+      // which override fixes it rather than surfacing a generic API failure.
+      if (data.error?.code === "model_not_found" || /does not exist|do not have access/i.test(data.error?.message || "")) {
+        return sendJson(res, 502, {
+          error: "That translation model is not available on this account.",
+          details: data.error?.message || "The configured model id was rejected by OpenAI.",
+          nextStep: "Set OPENAI_MODEL_LATEST (or OPENAI_MODEL / OPENAI_MODEL_QUALITY) in Vercel to a model id your account can use, then redeploy.",
+        }, req);
+      }
       return sendJson(res, response.status, {
         error: "OpenAI translation preview failed.",
         details: data.error?.message || "Unknown API error.",
