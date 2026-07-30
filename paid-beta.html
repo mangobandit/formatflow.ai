@@ -1,69 +1,89 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Buy FormatFlow Studio | Paid Beta for Windows</title>
-  <meta name="description" content="Request a paid FormatFlow Studio license for Windows. Start with the two-day trial, then receive a signed offline license after invoice payment." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://formatflow.ai/paid-beta.html" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="FormatFlow" />
-  <meta property="og:title" content="FormatFlow Studio Paid Beta" />
-  <meta property="og:description" content="Try FormatFlow Studio for two days, request a quote, and receive a signed offline license after payment." />
-  <meta property="og:url" content="https://formatflow.ai/paid-beta.html" />
-  <style>
-    :root{--bg:#050808;--panel:#0d1616;--line:rgba(128,255,229,.2);--text:#f8fff9;--muted:#cfe3de;--mint:#5eead4;--mint2:#dff7b2;--gold:#ffd166;--ink:#07100f;--soft:#f4f8f6}
-    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.6}a{color:inherit}.wrap{width:min(1060px,calc(100% - 32px));margin:auto}.top{padding:28px 0}.brand{display:flex;align-items:center;gap:12px;font-weight:900;text-decoration:none}.mark{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;border:1px solid var(--line);color:var(--gold)}.hero{padding:58px 0 76px}.pill{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--mint);font-weight:900;font-size:.86rem}.hero h1{font-size:clamp(2.7rem,6vw,5rem);line-height:1;letter-spacing:-.055em;max-width:900px;margin:22px 0}.lead{max-width:790px;color:var(--muted);font-size:1.16rem}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.btn{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:14px 22px;font-weight:900;text-decoration:none}.primary{background:linear-gradient(135deg,var(--mint),var(--mint2),var(--gold));color:var(--ink)}.secondary{border:1px solid var(--line);color:#fff}.section{padding:72px 0}.soft{background:var(--soft);color:#111827}.kicker{color:#0f766e;font-size:.78rem;text-transform:uppercase;letter-spacing:.1em;font-weight:900}.dark-kicker{color:var(--mint)}h2{font-size:clamp(2rem,4vw,3.6rem);line-height:1.04;letter-spacing:-.045em;margin:10px 0 18px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{padding:24px;border:1px solid #dbe8e4;border-radius:22px;background:#fff}.card h3{margin:0 0 9px}.card p,.card li,.copy{color:#5d667c}.card ul{padding-left:20px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}.step{border:1px solid var(--line);border-radius:20px;padding:22px;background:rgba(255,255,255,.055)}.step b{display:block;color:var(--gold);margin-bottom:8px}.step p{color:var(--muted);margin:0}.notice{margin-top:26px;padding:18px;border:1px solid rgba(255,209,102,.35);border-radius:18px;background:rgba(255,209,102,.08);color:#fff3c4}.fine{font-size:.92rem;color:#6b7280}.legal{display:flex;flex-wrap:wrap;gap:18px;margin-top:18px}.legal a{color:#0f766e;font-weight:900}.footer{padding:30px 0;border-top:1px solid var(--line);color:#b9cfc9}@media(max-width:780px){.grid,.steps{grid-template-columns:1fr}.hero{padding-top:34px}}
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FormatFlow Studio Paid Beta | Try the Workflow First</title>
+  <meta name="description" content="Try FormatFlow Studio for two days, then request a written paid-beta quote and signed offline license.">
+  <meta name="theme-color" content="#05090a">
+  <link rel="canonical" href="https://formatflow.ai/paid-beta.html">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="stylesheet" href="/assets/site.css">
+  <script defer src="/assets/site.js"></script>
 </head>
-<body>
-  <header class="top"><div class="wrap"><a class="brand" href="/"><span class="mark">FF</span>FormatFlow</a></div></header>
-  <main>
-    <section class="hero"><div class="wrap">
-      <span class="pill">Founding-customer paid beta</span>
-      <h1>Try the workflow first. Pay only when it fits your work.</h1>
-      <p class="lead">FormatFlow Studio is sold directly during the paid beta. Download the two-day Windows trial, test it with non-critical files, then request a written quote. After payment is confirmed, you receive a signed offline license for the access period shown on your quote and invoice.</p>
-      <div class="actions">
-        <a class="btn primary" href="mailto:hello@formatflow.ai?subject=FormatFlow%20paid%20beta%20license&body=Name%3A%0ACompany%3A%0ACountry%3A%0AHow%20many%20users%3A%0AMain%20file%20types%3A%0A">Request a quote and invoice</a>
-        <a class="btn secondary" href="/FormatFlowStudioInstaller.exe" download>Download the two-day trial</a>
-      </div>
-      <p class="notice"><strong>No card form is active on this site.</strong> Pricing, license duration, seller details, taxes and payment instructions are confirmed in writing before you pay.</p>
-    </div></section>
+<body class="support-page">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="FormatFlow home"><span class="brand-mark" aria-hidden="true">FF</span><span>FormatFlow</span></a>
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="/#product">Product</a><a href="/#workflow">How it works</a><a href="/#security">Security</a><a href="/#download">Download</a>
+      </nav>
+      <a class="button button-primary header-action" href="mailto:hello@formatflow.ai?subject=FormatFlow%20paid%20beta%20license">Request a quote</a>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-controls="mobileNav" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+      <a href="/#product">Product</a><a href="/#workflow">How it works</a><a href="/#security">Security</a><a href="/#download">Download</a>
+      <a class="button button-primary" href="mailto:hello@formatflow.ai?subject=FormatFlow%20paid%20beta%20license">Request a quote</a>
+    </nav>
+  </header>
 
-    <section class="section soft"><div class="wrap">
-      <p class="kicker">What is included</p>
-      <h2>A practical license for real document work.</h2>
-      <div class="grid">
-        <article class="card"><h3>Local desktop app</h3><p>Run FormatFlow Studio on Windows. Your documents are processed on your machine; cloud translation goes directly to the provider you choose under your own API key.</p></article>
-        <article class="card"><h3>Signed offline activation</h3><p>Your license is issued to you after payment. The app validates it locally, so normal use does not depend on a FormatFlow account or always-on license server.</p></article>
-        <article class="card"><h3>Founding-customer support</h3><p>Email support is included during the beta. If troubleshooting needs temporary access, you choose whether to activate a case-specific code that expires within 72 hours. It is not a remote login.</p></article>
+  <main class="support-main" id="main">
+    <section class="support-hero">
+      <div class="container">
+        <h1>Try the workflow first. Pay only when it fits your work.</h1>
+        <p>FormatFlow Studio includes a two-day trial so you can test real PPTX and DOCX jobs before requesting a signed paid-beta license.</p>
+        <div class="support-actions">
+          <a class="button button-primary" href="/FormatFlowStudioInstaller.exe" download data-track="download" data-loc="paid-beta">Download the two-day trial</a>
+          <a class="button button-secondary" href="mailto:hello@formatflow.ai?subject=FormatFlow%20paid%20beta%20license">Request a quote and invoice</a>
+        </div>
       </div>
-    </div></section>
+    </section>
 
-    <section class="section"><div class="wrap">
-      <p class="kicker dark-kicker">How buying works</p>
-      <h2>A manual, accountable purchase flow.</h2>
-      <div class="steps">
-        <article class="step"><b>1 — Trial</b><p>Download the app and test the two-day trial with sample or non-critical documents.</p></article>
-        <article class="step"><b>2 — Quote</b><p>Email your country, company or name, user count and intended workflow.</p></article>
-        <article class="step"><b>3 — Invoice</b><p>Review the exact price, currency, taxes, seller identity, license duration and payment instructions.</p></article>
-        <article class="step"><b>4 — License</b><p>After cleared payment, receive your signed activation key and keep your invoice for support.</p></article>
+    <section class="support-section">
+      <div class="container">
+        <h2>A practical license for real document work.</h2>
+        <p class="support-copy">The paid beta is designed for consultants, agencies and internal teams translating business decks and documents. Test the app, confirm the workflow and receive the commercial details in writing before you pay.</p>
+        <div class="support-grid">
+          <article class="support-card"><h3>Test with your files</h3><p>Use the complete local workflow during the trial, including layout checks, glossary controls and review output.</p></article>
+          <article class="support-card"><h3>Know the terms first</h3><p>Your written quote states the price, currency, tax treatment, license duration and included users.</p></article>
+          <article class="support-card"><h3>Activate offline</h3><p>After cleared payment, you receive a signed offline activation key tied to the agreed order.</p></article>
+        </div>
       </div>
-    </div></section>
+    </section>
 
-    <section class="section soft"><div class="wrap">
-      <p class="kicker">Before you buy</p>
-      <h2>Clear limits, with no surprise provider bill.</h2>
-      <div class="grid">
-        <article class="card"><h3>Windows beta</h3><p>The current public build is a Windows beta. The installer is not yet code-signed, so Windows can display an unknown-publisher warning. Verify the published checksum before installing.</p></article>
-        <article class="card"><h3>Bring your own AI provider</h3><p>The FormatFlow license does not include OpenAI, Anthropic, Gemini or other provider usage. Those providers may charge you separately. Ollama can be used for local model workflows.</p></article>
-        <article class="card"><h3>Review is still required</h3><p>Machine translation and layout checks can be wrong. Review translated files before legal, safety-critical, financial, medical or client delivery use.</p></article>
+    <section class="support-section">
+      <div class="container">
+        <h2>A manual, accountable purchase flow.</h2>
+        <div class="support-grid">
+          <article class="support-card"><h3>1. Request</h3><p>Tell us your workflow, user count and country.</p></article>
+          <article class="support-card"><h3>2. Review</h3><p>Receive a written quote and invoice with the exact commercial terms.</p></article>
+          <article class="support-card"><h3>3. Activate</h3><p>After payment clears, receive the signed key and beta support details.</p></article>
+        </div>
       </div>
-      <p class="fine">The quote and invoice control the commercial details of your purchase. Your mandatory consumer rights, where applicable, are not limited by these pages.</p>
-      <nav class="legal" aria-label="Purchase policies"><a href="/terms.html">Terms of Sale</a><a href="/refund-policy.html">Refund Policy</a><a href="/privacy.html">Privacy Policy</a><a href="/formatflow-studio.html">Product and checksum details</a></nav>
-    </div></section>
+    </section>
+
+    <section class="support-section">
+      <div class="container">
+        <h2>Clear limits. No surprise provider bill.</h2>
+        <p class="support-copy">FormatFlow is licensed separately from the AI provider you choose. Your provider usage runs under your own API key and billing relationship. The app includes estimation and cost-cap controls so you can review projected usage before translating.</p>
+        <div class="support-actions">
+          <a class="text-link" href="/terms.html">Terms of Sale</a>
+          <a class="text-link" href="/refund-policy.html">Refund Policy</a>
+          <a class="text-link" href="/privacy.html">Privacy Policy</a>
+          <a class="text-link" href="/formatflow-studio.html">Product and checksum details</a>
+        </div>
+      </div>
+    </section>
   </main>
-  <footer class="footer"><div class="wrap">Questions? <a href="mailto:hello@formatflow.ai">hello@formatflow.ai</a></div></footer>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true">FF</span><span>FormatFlow</span></a><p>Document translation without the rebuild.</p></div>
+      <div class="footer-right"><nav class="footer-links" aria-label="Footer navigation"><a href="/">Home</a><a href="/terms.html">Terms</a><a href="/refund-policy.html">Refunds</a><a href="/privacy.html">Privacy</a></nav><a class="footer-contact" href="mailto:hello@formatflow.ai">hello@formatflow.ai</a></div>
+    </div>
+  </footer>
 </body>
 </html>

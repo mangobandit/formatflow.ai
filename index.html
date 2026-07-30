@@ -1,248 +1,496 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FormatFlow Studio | Batch Translate PPTX and DOCX Files</title>
-  <meta name="description" content="Try the FormatFlow online file tester or download FormatFlow Studio for Windows. Analyse PPTX and DOCX files, preview extracted text, run layout checks and prepare multilingual document workflows." />
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-  <meta name="theme-color" content="#050808" />
-  <link rel="canonical" href="https://formatflow.ai/" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FormatFlow Studio | Translate the Document. Keep the Design.</title>
+  <meta name="description" content="Translate PPTX and DOCX files while preserving structure, layout and review controls. FormatFlow Studio runs locally on Windows and uses your own API key.">
+  <meta name="theme-color" content="#05090a">
+  <link rel="canonical" href="https://formatflow.ai/">
 
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="FormatFlow" />
-  <meta property="og:title" content="FormatFlow Studio | Batch Translate and Format Documents" />
-  <meta property="og:description" content="Try the online FormatFlow file tester for PPTX and DOCX workflows, or download the Windows app for full document translation." />
-  <meta property="og:url" content="https://formatflow.ai/" />
-  <meta property="og:image" content="https://formatflow.ai/og-image.png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="FormatFlow Studio - batch translate PPTX and DOCX while keeping the format." />
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://formatflow.ai/">
+  <meta property="og:title" content="FormatFlow Studio | Translate the Document. Keep the Design.">
+  <meta property="og:description" content="A local-first workflow for translating PPTX and DOCX files without rebuilding the formatting.">
+  <meta property="og:image" content="https://formatflow.ai/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="FormatFlow Studio">
+  <meta name="twitter:description" content="Translate the document. Keep the design.">
+  <meta name="twitter:image" content="https://formatflow.ai/og-image.png">
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="FormatFlow Studio | Batch Translate and Format Documents" />
-  <meta name="twitter:description" content="Translate PPTX and DOCX in batches while preserving layout, structure and terminology." />
-  <meta name="twitter:image" content="https://formatflow.ai/og-image.png" />
-
-  <!-- Structured data for richer search results -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "FormatFlow Studio",
-    "operatingSystem": "Windows",
     "applicationCategory": "BusinessApplication",
-    "downloadUrl": "https://formatflow.ai/FormatFlowStudioInstaller.exe",
+    "operatingSystem": "Windows 10, Windows 11",
+    "softwareVersion": "0.3.0",
+    "description": "FormatFlow Studio translates PPTX and DOCX files while preserving structure, layout and review controls.",
     "url": "https://formatflow.ai/",
-    "description": "FormatFlow Studio batch translates PPTX and DOCX files while preserving layout, structure, terminology and review-ready formatting.",
+    "downloadUrl": "https://formatflow.ai/FormatFlowStudioInstaller.exe",
     "offers": {
       "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
+      "description": "Two-day trial followed by a direct paid-beta quote."
     }
   }
   </script>
 
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-  <!-- JSZip is loaded lazily, only when the tester is first used (see loadJSZip). -->
-  <link rel="manifest" href="/manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="/icon-192.png" />
-  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
-
-  <!-- Privacy-friendly analytics (no cookies, no banner needed).
-       Create a free Plausible site for formatflow.ai, or swap this line for
-       your preferred analytics. If the account is not set up yet, the
-       window.plausible() calls below are safe no-ops. -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="stylesheet" href="/assets/site.css">
   <script defer data-domain="formatflow.ai" src="https://plausible.io/js/script.tagged-events.js"></script>
-  <script>window.plausible = window.plausible || function(){ (window.plausible.q = window.plausible.q || []).push(arguments); };</script>
-
-  <style>
-    :root{--bg:#050808;--bg2:#0d1616;--line:rgba(128,255,229,.18);--text:#f8fff9;--muted:#d7eee7;--mint:#5eead4;--mint2:#dff7b2;--gold:#ffd166;--ink:#07100f;--soft:#f4f8f6;--shadow:0 28px 90px rgba(0,0,0,.34)}
-    *{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,var(--bg),var(--bg2) 48%,var(--soft) 48%,#fff);color:var(--text);line-height:1.55}a{text-decoration:none;color:inherit}.container{width:min(1160px,calc(100% - 32px));margin:auto}.btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;padding:14px 22px;font-weight:900;transition:.2s;white-space:nowrap;cursor:pointer}.btn:hover{transform:translateY(-2px)}.btn-primary{background:linear-gradient(135deg,var(--mint),var(--mint2) 52%,var(--gold));color:var(--ink);box-shadow:0 16px 46px rgba(94,234,212,.2)}.btn-light{background:#fff;color:#111827;box-shadow:0 18px 45px rgba(17,24,39,.16)}.btn-ghost{background:rgba(255,255,255,.1);border:1px solid var(--line);color:#fff}.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
-    header{position:sticky;top:0;z-index:10;background:rgba(5,8,8,.78);backdrop-filter:blur(18px);border-bottom:1px solid rgba(128,255,229,.1)}.nav{height:76px;display:flex;justify-content:space-between;align-items:center}.brand{display:flex;align-items:center;gap:12px;font-weight:900;font-size:1.28rem}.mark{width:42px;height:42px;border-radius:14px;background:#050808;display:grid;place-items:center;box-shadow:0 14px 44px rgba(94,234,212,.24),0 0 34px rgba(255,209,102,.14);border:1px solid rgba(128,255,229,.18);color:var(--gold);font-weight:1000}.navlinks{display:flex;gap:24px;color:#d8f3ec;font-size:.94rem;font-weight:700}
-    .hero{padding:84px 0 96px}.grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:42px;align-items:center}.pill{display:inline-flex;gap:10px;align-items:center;border:1px solid var(--line);background:rgba(255,255,255,.1);border-radius:999px;padding:9px 14px;color:#e8fff7;font-weight:800;font-size:.88rem;margin-bottom:24px}.pulse{width:9px;height:9px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 8px rgba(94,234,212,.15)}h1{font-size:clamp(2.75rem,5.35vw,5.05rem);line-height:1;letter-spacing:-.055em;margin-bottom:26px}.grad{background:linear-gradient(120deg,#fff,var(--mint) 42%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}.hero p{font-size:1.16rem;color:var(--muted);max-width:680px;margin-bottom:32px}.actions{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:24px}.ticks{display:flex;flex-wrap:wrap;gap:14px;color:var(--muted)}.tick{color:var(--mint);font-weight:900}.trustline{color:#9fd9c9;font-size:.9rem;font-weight:700;margin:-8px 0 18px}
-    .product{border:1px solid var(--line);background:rgba(255,255,255,.085);box-shadow:var(--shadow);border-radius:28px;overflow:hidden}.bar{display:flex;align-items:center;gap:10px;background:#10151b;border-bottom:1px solid #2b323b;padding:14px 16px}.dot{width:11px;height:11px;border-radius:50%;background:#374151}.dot:nth-child(1){background:#ff6b6b}.dot:nth-child(2){background:#ffd166}.dot:nth-child(3){background:#5eead4}.screen{background:linear-gradient(135deg,#0c1919,#080a0e 48%,#171016);padding:28px;min-height:520px}.screen h2{font-size:2rem;line-height:1.08;letter-spacing:-.035em;margin-bottom:18px}.drop{border:1px dashed rgba(128,255,229,.3);border-radius:18px;background:rgba(255,255,255,.055);padding:28px;text-align:center;margin-bottom:16px}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.app-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);border-radius:16px;padding:16px;min-height:170px}.app-card h3{font-size:1rem;margin-bottom:12px}.app-card p,.app-card li{color:#cfe0ec;font-size:.94rem}.app-card ul{list-style:none;display:grid;gap:9px}
-    .section{padding:86px 0;color:#111827}.soft{background:var(--soft)}.white{background:#fff}.dark{background:#050808;color:#fff}.kicker{color:#0f766e;font-weight:900;letter-spacing:.1em;text-transform:uppercase;font-size:.78rem;margin-bottom:12px}.dark .kicker{color:var(--mint)}h2{font-size:clamp(2.2rem,4.5vw,4rem);line-height:1;letter-spacing:-.045em;margin-bottom:18px}.lead{font-size:1.1rem;color:#5d667c;max-width:760px;margin-bottom:40px}.dark .lead{color:#cfe3de}.feature-grid,.library{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.feature{background:#fff;border:1px solid #e3ece8;border-radius:24px;padding:26px;box-shadow:0 18px 50px rgba(17,24,39,.055)}.feature b{width:48px;height:48px;border-radius:16px;background:#e8fbf6;color:#0f766e;display:grid;place-items:center;margin-bottom:18px}.feature h3{font-size:1.18rem;margin-bottom:8px}.feature p{color:#637087}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.step,.library-card{background:#07100f;color:#fff;border-radius:24px;padding:26px;min-height:210px}.step p,.library-card ul{color:#c7deda}.library-card ul{display:grid;gap:10px;list-style:none}.library-card li:before{content:"✓ ";color:var(--mint);font-weight:900}
-    #demo{padding:72px 0 84px}.demo-heading{max-width:900px;margin-bottom:26px}.demo-heading h2{font-size:clamp(2.2rem,4vw,3.35rem);max-width:760px}.demo-heading .lead{max-width:850px;margin-bottom:0}.demo-shell{display:grid;grid-template-columns:minmax(330px,.86fr) minmax(440px,1.14fr);gap:20px;align-items:start}.demo-panel,.demo-output{border:1px solid rgba(128,255,229,.16);border-radius:28px;background:rgba(255,255,255,.075);padding:24px;box-shadow:0 26px 80px rgba(0,0,0,.25)}.demo-panel h3{font-size:1.1rem;margin-bottom:14px}.upload-zone{display:block;border:1px dashed rgba(128,255,229,.45);border-radius:20px;background:rgba(255,255,255,.065);padding:24px;text-align:center;margin:0 0 14px;cursor:pointer}.upload-zone:hover{background:rgba(94,234,212,.08);border-color:rgba(128,255,229,.7)}.upload-zone strong{display:block;font-size:1.06rem;margin-bottom:8px}.upload-zone span{display:block;color:#cfe3de;font-size:.95rem;max-width:420px;margin:auto}.upload-zone input{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px}.file-list{display:grid;gap:10px;margin:12px 0 18px}.file-item{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:rgba(0,0,0,.2);color:#eafff9}.demo-controls{display:grid;gap:14px}.demo-controls label{display:grid;gap:8px;color:#d9f2ec;font-weight:800}.demo-controls select,.demo-controls textarea{width:100%;border:1px solid rgba(128,255,229,.2);border-radius:16px;background:#07100f;color:#fff;padding:13px 14px;font:inherit}.demo-controls textarea{min-height:88px;resize:vertical}.lang-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}.lang-head label{display:block}.lang-count{font-weight:600;color:#9fd8cd;font-size:.85rem;margin-left:6px}.lang-actions{display:flex;gap:8px}.lang-actions button{border:1px solid rgba(128,255,229,.28);background:rgba(255,255,255,.06);color:#bfffea;border-radius:999px;padding:5px 12px;font:inherit;font-size:.82rem;font-weight:800;cursor:pointer}.lang-actions button:hover:not(:disabled){background:rgba(94,234,212,.16);border-color:rgba(128,255,229,.6)}.lang-actions button:disabled{opacity:.4;cursor:default}.lang-actions button:focus-visible{outline:2px solid var(--mint);outline-offset:2px}.language-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.language-grid label{display:flex;align-items:center;gap:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);border-radius:14px;padding:11px;color:#fff}.language-grid input{accent-color:#5eead4}.status-card{border:1px solid rgba(255,255,255,.12);border-radius:20px;background:#07100f;padding:18px;margin-bottom:16px}.status-card h3{margin-bottom:8px}.status-card p,.result-card p{color:#cfe3de}.progress{height:10px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:14px 0}.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--mint2),var(--gold));transition:width .4s}.result-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.result-card{border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(255,255,255,.07);padding:16px}.result-card h4{margin-bottom:8px}.qa-list{display:grid;gap:9px;margin-top:12px}.qa-list div{color:#dcfff7}.privacy-note{color:#bfffea;background:rgba(94,234,212,.09);border:1px solid rgba(94,234,212,.22);border-radius:16px;padding:14px;margin-top:18px;font-size:.94rem}.text-preview{margin-top:16px;border:1px solid rgba(255,255,255,.12);border-radius:18px;background:rgba(0,0,0,.22);padding:16px;max-height:250px;overflow:auto;white-space:pre-wrap;color:#eafff9;font-size:.92rem}.output-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-    .download{background:#fff;color:#111827;padding:86px 0}.download-box{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center;border:1px solid #e3ece8;border-radius:32px;padding:34px;background:linear-gradient(135deg,#f4f8f6,#fff 58%,#fff7df);box-shadow:0 24px 70px rgba(17,24,39,.08)}.download p{color:#5d667c;font-size:1.08rem;max-width:690px;margin-bottom:24px}.download-note{color:#64748b;font-size:.95rem;margin-top:-12px}.download-card{background:#07100f;color:#fff;border-radius:26px;padding:28px;border:1px solid rgba(128,255,229,.16);box-shadow:0 22px 60px rgba(7,16,15,.22)}.download-card p{color:#cfe3de}.download-card .btn{width:100%}.badge{display:inline-flex;margin-bottom:18px;border-radius:999px;padding:8px 12px;background:linear-gradient(135deg,var(--mint),var(--mint2),var(--gold));color:#07100f;font-weight:1000;font-size:.85rem}.verify{margin-top:20px;border:1px solid #d9e8e4;border-radius:18px;background:#fff;padding:18px;color:#334155}.verify h3{font-size:1rem;margin-bottom:8px;color:#111827}.verify p{font-size:.95rem;margin-bottom:10px;color:#475569}.verify code{display:block;overflow-wrap:anywhere;background:#f1f5f9;border:1px solid #dbe5ea;border-radius:10px;padding:10px;font-size:.82rem;color:#0f172a}.verify a{color:#0f766e;font-weight:900}.cta{background:#050808;color:#fff;padding:92px 0;text-align:center}.cta p{color:#d2e8e2;font-size:1.15rem;max-width:760px;margin:0 auto 28px}footer{background:#050808;color:#b9cfc9;border-top:1px solid rgba(128,255,229,.1);padding:30px 0}.footer{display:flex;justify-content:space-between;gap:18px;align-items:center}
-    @media(max-width:960px){.grid,.download-box,.demo-shell{grid-template-columns:1fr}.cards,.feature-grid,.steps,.library{grid-template-columns:1fr 1fr}}@media(max-width:680px){.navlinks{display:none}.hero{padding:58px 0 72px}h1{font-size:3rem}.cards,.feature-grid,.steps,.library,.result-grid,.language-grid{grid-template-columns:1fr}.screen{padding:20px}.download-box,.demo-panel,.demo-output{padding:20px}.footer{flex-direction:column;align-items:flex-start}}
-  </style>
-  <style>
-    .sale{background:linear-gradient(135deg,#07100f,#0b1f1c 58%,#231b0c);color:#fff;padding:86px 0}
-    .sale-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:stretch}
-    .sale-card{border:1px solid rgba(128,255,229,.18);border-radius:26px;background:rgba(255,255,255,.07);padding:28px}
-    .sale-card h3{font-size:1.3rem;margin-bottom:12px}.sale-card p,.sale-card li{color:#cfe3de}
-    .sale-card ul{display:grid;gap:10px;padding-left:20px}.sale-note{margin-top:18px;color:#ffd166;font-weight:800}
-    @media(max-width:960px){.sale-grid{grid-template-columns:1fr}}
-  </style>
+  <script>
+    window.plausible = window.plausible || function () {
+      (window.plausible.q = window.plausible.q || []).push(arguments);
+    };
+  </script>
+  <script defer src="/assets/site.js"></script>
 </head>
 <body>
-<header><div class="container nav"><a class="brand" href="#"><span class="mark">FF</span>FormatFlow</a><nav class="navlinks"><a href="#why">Why FormatFlow</a><a href="#features">Features</a><a href="#demo">Online Tester</a><a href="#formats">Formats</a><a href="#paid-beta">Paid Beta</a><a href="#download">Download</a></nav></div></header>
-<main>
-<section class="hero"><div class="container grid"><div><div class="pill"><span class="pulse"></span>FormatFlow Studio for Windows</div><h1>Batch translate documents and <span class="grad">keep the format.</span></h1><p>FormatFlow Studio translates PPTX and DOCX files in batches while preserving layout, structure, terminology and review-ready formatting across languages. It runs on your machine: your files are processed locally and never touch our servers.</p><div class="actions"><a class="btn btn-primary" href="#demo">Try the Online Tester</a><a class="btn btn-ghost plausible-event-name=Download+Hero" href="FormatFlowStudioInstaller.exe" download data-track="download" data-loc="hero">Download for Windows</a></div><div class="trustline">Local-first · your files never touch our servers · translation runs under your own API key</div><div class="ticks"><span><b class="tick">✓</b> PPTX and DOCX</span><span><b class="tick">✓</b> Real File Analysis</span><span><b class="tick">✓</b> QA Report Download</span><span><b class="tick">✓</b> Runs Locally</span></div></div><aside class="product" aria-label="FormatFlow Studio product preview"><div class="bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><strong>FormatFlow Studio</strong></div><div class="screen"><h2>PPTX translation that keeps the deck structure intact.</h2><div class="drop"><strong>Drop PPTX or DOCX files here</strong><br><span>Outputs are grouped by language and named for review.</span></div><div class="cards"><div class="app-card"><h3>Target Languages</h3><ul><li>Arabic</li><li>Chinese</li><li>French</li><li>German</li><li>Spanish</li></ul></div><div class="app-card"><h3>Translation Mode</h3><p>Corporate tone, glossary-aware phrasing and model selection for document work.</p></div><div class="app-card"><h3>Quality Controls</h3><ul><li>Layout Preservation</li><li>Overflow Detection</li><li>Adapt Text to Fit</li></ul></div></div></div></aside></div></section>
-<section class="section dark" id="why"><div class="container"><div class="kicker">Why FormatFlow</div><h2>Your files. Your rules. Your machine.</h2><p class="lead">Most translation tools upload your document to their cloud and decide everything for you. FormatFlow does the opposite.</p><style>.why-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.why-card{background:rgba(255,255,255,.07);border:1px solid rgba(128,255,229,.16);border-radius:24px;padding:26px}.why-card h3{font-size:1.18rem;margin:14px 0 8px}.why-card p{color:#c7deda;font-size:.97rem}.why-icon{font-size:1.6rem}.soon{display:inline-block;margin-left:8px;vertical-align:middle;border-radius:999px;padding:4px 10px;background:rgba(255,209,102,.16);border:1px solid rgba(255,209,102,.4);color:var(--gold);font-size:.72rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}@media(max-width:960px){.why-grid{grid-template-columns:1fr}}</style><div class="why-grid"><article class="why-card"><div class="why-icon">🔒</div><h3>Local-first</h3><p>FormatFlow Studio runs on your computer. Your documents are opened, checked and rebuilt locally — they never touch our servers. Translation goes straight from your machine to the AI provider, under your own API key, only when you run it. Built for NDA decks, board packs and legal documents.</p></article><article class="why-card"><div class="why-icon">🎛️</div><h3>Parameters you control</h3><p>You set the rules for every batch: target languages, model choice, tone preset and industry, your own client brief, glossary and translation memory, adapt-text-to-fit on or off, and a cap on estimated API cost. Nothing is decided for you.</p></article><article class="why-card"><div class="why-icon">👥</div><h3>Per-client profiles <span class="soon">Coming soon</span></h3><p>Save those settings as a named profile per client or brand and reuse them in one click — your house rules, applied to every job with no reconfiguring. Today, glossaries and translation memory already carry each client's terminology across projects.</p></article><article class="why-card"><div class="why-icon">📋</div><h3>Review-first overflow</h3><p>Translated text often runs longer than the original. When it won't fit its box, FormatFlow flags it for review — you check a short list in QA Review and approve. Auto-fit only runs if you switched it on. Nothing is changed silently.</p></article></div></div></section>
-<section class="section soft" id="features"><div class="container"><div class="kicker">Core Features</div><h2>Built for people who translate documents, not just words.</h2><p class="lead">FormatFlow combines translation and formatting into one workflow for business decks, client documents, onboarding materials and multilingual review cycles.</p><div class="feature-grid"><article class="feature"><b>01</b><h3>Batch Translation</h3><p>Upload multiple PPTX or DOCX files and translate them together instead of handling each one manually.</p></article><article class="feature"><b>02</b><h3>Layout Preservation</h3><p>Keep headings, tables, sections, spacing and slide structure as clean as possible.</p></article><article class="feature"><b>03</b><h3>Multi-Language Output</h3><p>Create translated versions for several target languages from the same source batch.</p></article><article class="feature"><b>04</b><h3>Quality Controls</h3><p>Run layout checks, detect overflow and adapt translations to fit the original space.</p></article><article class="feature"><b>05</b><h3>Glossary and Memory</h3><p>Keep terminology and recurring phrases consistent across teams, clients and document sets.</p></article><article class="feature"><b>06</b><h3>Review Workflow</h3><p>Make it easier for reviewers to approve content without rebuilding the deck or document.</p></article></div></div></section>
-<section class="section white" id="workflow"><div class="container"><div class="kicker">Workflow</div><h2>From source files to formatted translations in four steps.</h2><p class="lead">A simple flow for converting one source batch into clean multilingual decks and documents.</p><div class="steps"><article class="step"><h3>1. Upload Files</h3><p>Add the PPTX or DOCX files that need translation and formatting.</p></article><article class="step"><h3>2. Choose Languages</h3><p>Select one or more target languages for the batch.</p></article><article class="step"><h3>3. Set Controls</h3><p>Preserve layout, detect overflow, protect terminology and guide tone.</p></article><article class="step"><h3>4. Export Clean Files</h3><p>Download translated, organised and review-ready documents.</p></article></div></div></section>
-<section class="section dark" id="demo"><div class="container"><div class="demo-heading"><div class="kicker">Online File Tester</div><h2>Upload a real PPTX, DOCX or PDF file.</h2><p class="lead">This tester now reads your file in the browser, extracts document text, detects structure, runs practical QA checks and creates a downloadable review report. Files are processed locally in your browser.</p></div><div class="demo-shell"><div class="demo-panel"><h3>File Input</h3><label class="upload-zone" for="demoFile"><strong>Choose a PPTX, DOCX or PDF file</strong><span>The tester will read the file locally and prepare a review report.</span><input id="demoFile" type="file" accept=".pptx,.docx,.pdf" /></label><div class="file-list" id="fileList"><div class="file-item"><span>No file selected</span><span>Waiting</span></div></div><div class="demo-controls"><label>Document Type<select id="docType"><option>Auto-detect</option><option>PowerPoint Presentation</option><option>Word Document</option><option>Client Proposal</option><option>Training Material</option><option>Internal Policy</option></select></label><div class="lang-head"><label id="langLabel">Target Languages <span class="lang-count" id="langCount">2 of 4 selected</span></label><div class="lang-actions"><button type="button" id="selectAllLangs">Select all</button><button type="button" id="clearAllLangs">Clear all</button></div></div><div class="language-grid" role="group" aria-labelledby="langLabel"><label><input type="checkbox" value="Spanish" checked /> Spanish</label><label><input type="checkbox" value="French" checked /> French</label><label><input type="checkbox" value="German" /> German</label><label><input type="checkbox" value="Arabic" /> Arabic</label></div><label>Translation Model<select id="translateModel"><option value="fast" selected>GPT-4o mini — fast, lowest cost</option><option value="quality">GPT-4o — higher quality</option><option value="latest">ChatGPT 5.6 — newest</option></select></label><label>Glossary / Tone Notes<textarea id="toneNotes">Use a clear business tone. Keep product names, headings and technical terms consistent.</textarea></label><button class="btn btn-primary" id="runDemo" type="button">Analyse File</button></div><p class="privacy-note">Working tester: files are read locally in your browser for analysis. Full online translation/export will require a secure backend and API key.</p></div><div class="demo-output"><div class="status-card"><h3 id="demoStatusTitle">Ready to analyse</h3><p id="demoStatusText">Choose a PPTX, DOCX or PDF file, then click Analyse File.</p><div class="progress"><span id="progressBar"></span></div></div><div class="result-grid" id="resultGrid"><div class="result-card"><h4>Detected File</h4><p>Waiting for upload</p></div><div class="result-card"><h4>Structure</h4><p>Not analysed yet</p></div><div class="result-card"><h4>Translation Plan</h4><p>Select languages and analyse a file.</p></div><div class="result-card"><h4>Review Pack</h4><p>Report will appear after analysis.</p></div></div><div class="qa-list" id="qaList"><div>✓ Ready for PPTX, DOCX or PDF analysis</div></div><pre class="text-preview" id="textPreview">Extracted text preview will appear here.</pre><div class="output-actions"><button class="btn btn-light" id="downloadReport" type="button" disabled>Download Review Report</button><button class="btn btn-primary" id="translatePreview" type="button" disabled>Translate Preview (beta)</button></div><div id="translateResult"></div></div></div></div></section>
-<section class="section soft" id="library"><div class="container"><div class="kicker">Use-Case Library</div><h2>Clear categories for real document work.</h2><p class="lead">Instead of presenting FormatFlow as a generic translator, the product is framed around practical document categories and review outcomes.</p><div class="library"><article class="library-card"><h3>Document Types</h3><ul><li>PowerPoint Presentations</li><li>Word Documents</li><li>Client Proposals</li><li>Training Materials</li><li>Internal Policies</li></ul></article><article class="library-card"><h3>Workflow Categories</h3><ul><li>Batch Translation</li><li>Layout Preservation</li><li>Glossary Control</li><li>Review Preparation</li><li>Multilingual Export</li></ul></article><article class="library-card"><h3>Best-Fit Users</h3><ul><li>Consultants</li><li>Marketing Teams</li><li>Event Teams</li><li>Training Teams</li><li>Small Agencies</li></ul></article></div></div></section>
-<section class="section white" id="getting-started"><div class="container"><div class="kicker">Getting Started</div><h2>From install to exported files in six steps.</h2><p class="lead">A quick guide to running your first batch translation in FormatFlow Studio for Windows.</p><div class="feature-grid"><article class="feature"><b>01</b><h3>Install</h3><p>Download the Windows installer and run it. Approve the unknown-publisher prompt until the build is code-signed.</p></article><article class="feature"><b>02</b><h3>Activate your license</h3><p>Open the <strong>License</strong> tab, paste your license key and click Activate. A short trial unlocks everything so you can test first.</p></article><article class="feature"><b>03</b><h3>Add documents</h3><p>Go to <strong>Documents</strong> and drag in your PPTX or DOCX files — or drop them straight onto the Dashboard.</p></article><article class="feature"><b>04</b><h3>Choose languages &amp; controls</h3><p>Select your target languages and turn on Layout Preservation, Overflow Detection and Adapt&nbsp;Text&nbsp;to&nbsp;Fit.</p></article><article class="feature"><b>05</b><h3>Translate the batch</h3><p>Click <strong>Translate Batch</strong>. Run <strong>Estimate Cost</strong> first if you want a projected API spend before committing.</p></article><article class="feature"><b>06</b><h3>Review &amp; export</h3><p>Check the <strong>QA Review</strong> tab for overflow and glossary issues, then <strong>Export Report</strong> for review-ready files.</p></article></div></div></section>
-<section class="section soft" id="setup"><div class="container"><div class="kicker">Setup Guide</div><h2>Set up the app and run your first translation.</h2><p class="lead">A step-by-step walkthrough of the basic setup inside FormatFlow Studio for Windows.</p><style>.setup-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e3ece8;border-radius:18px;overflow:hidden;box-shadow:0 18px 50px rgba(17,24,39,.05)}.setup-table th,.setup-table td{padding:14px 18px;text-align:left;vertical-align:top;border-bottom:1px solid #eef3f1;font-size:1rem}.setup-table thead th{background:#07100f;color:#dff7b2;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}.setup-table tbody tr:last-child td{border-bottom:0}.setup-table td.num{font-weight:900;color:#0f766e;width:46px}.setup-table td.where{font-weight:800;color:#111827;white-space:nowrap}.setup-table td.what{color:#475569}@media(max-width:680px){.setup-table th,.setup-table td{padding:11px 12px;font-size:.9rem}.setup-table td.where{white-space:normal}}</style><div style="overflow-x:auto"><table class="setup-table"><thead><tr><th>#</th><th>In the app</th><th>What to do</th></tr></thead><tbody><tr><td class="num">1</td><td class="where">Install &amp; open</td><td class="what">Run FormatFlowStudioInstaller.exe. If Windows shows a publisher warning, click More info, then Run anyway. Open FormatFlow Studio.</td></tr><tr><td class="num">2</td><td class="where">License</td><td class="what">Open the License tab, paste your license key and click Activate license. A short trial unlocks everything so you can test first.</td></tr><tr><td class="num">3</td><td class="where">Settings</td><td class="what">Choose OpenAI, paste your OpenAI API key, pick a default model, then click Save settings. This is what powers translation.</td></tr><tr><td class="num">4</td><td class="where">Settings</td><td class="what">Optional: set cost controls and output defaults such as file naming and layout checks.</td></tr><tr><td class="num">5</td><td class="where">Glossary</td><td class="what">Optional: add brand names, product names and protected terms, then Save glossary so they stay consistent.</td></tr><tr><td class="num">6</td><td class="where">Memory</td><td class="what">Optional: add source = approved translation pairs to reuse wording across projects.</td></tr><tr><td class="num">7</td><td class="where">Documents</td><td class="what">Drag your PPTX or DOCX files in, or drop them onto the Dashboard.</td></tr><tr><td class="num">8</td><td class="where">Documents</td><td class="what">Select one or more target languages for the batch.</td></tr><tr><td class="num">9</td><td class="where">Dashboard</td><td class="what">Optional: click Estimate cost to preview the API spend before running.</td></tr><tr><td class="num">10</td><td class="where">Dashboard</td><td class="what">Click Translate batch and let it process your files.</td></tr><tr><td class="num">11</td><td class="where">QA Review</td><td class="what">Check overflow, layout and glossary flags before you deliver.</td></tr><tr><td class="num">12</td><td class="where">Export</td><td class="what">Export your translated, review-ready files and the QA report.</td></tr></tbody></table></div></div></section>
-<section class="section dark" id="switch"><div class="container"><div class="kicker">Works Alongside Your Tools</div><h2>Already have a tool? Keep it.</h2><p class="lead">Your current tool translates the words. It still leaves you the rebuild, the upload, and settings you can't change. FormatFlow fits alongside your CAT tool — and removes the cleanup.</p><style>.switch-table{width:100%;border-collapse:collapse;font-size:.97rem}.switch-table th{padding:12px 18px 12px 0;text-align:left;color:#9fd9c9;border-bottom:1px solid rgba(128,255,229,.25);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase}.switch-table td{padding:14px 18px 14px 0;border-bottom:1px solid rgba(255,255,255,.1);vertical-align:top}.switch-table td:first-child{color:#9fb3ae}.switch-table td:last-child{color:#eafff9;font-weight:600}.switch-note{color:var(--mint);margin-top:24px;font-size:1.05rem;font-weight:800}</style><div style="overflow-x:auto"><table class="switch-table"><thead><tr><th>Your current tool / plugin</th><th>FormatFlow</th></tr></thead><tbody><tr><td>Uploads your document to their cloud</td><td>Runs locally — your files never touch our servers</td></tr><tr><td>Resizes silently, or you fix overflow by eye</td><td>Review-first overflow flags you check and approve</td></tr><tr><td>Fixed defaults you can't change</td><td>Your rules: model, tone preset, client brief, glossary, fit behaviour, cost cap</td></tr><tr><td>One file at a time, or per-document caps</td><td>Batch whole folders of PPTX and DOCX — no per-document caps</td></tr></tbody></table></div><p class="switch-note">Keep your CAT tool. Lose the cleanup.</p></div></section>
-<section class="section white" id="formats"><div class="container"><div class="kicker">Formats</div><h2>PPTX and DOCX today. PDF is next.</h2><p class="lead">The most-requested format is PDF, so here is exactly where it stands — we publish what ships, not what might.</p><div class="library"><article class="library-card"><h3>Today — full translation</h3><ul><li>PowerPoint (.pptx)</li><li>Word (.docx)</li><li>Batch folders, multiple languages</li><li>Glossary and translation memory</li><li>Overflow flagged for review</li></ul></article><article class="library-card"><h3>On the roadmap — PDF</h3><p style="color:#c7deda">Layout-preserving PDF translation is in design: text-layer PDFs first, box positions kept, overflow flagged — never silently reflowed. The <a href="#demo" style="color:#5eead4;font-weight:800">online tester</a> already analyses PDFs today.</p><p style="margin-top:12px"><a class="plausible-event-name=PDF+Early+Access" href="mailto:hello@formatflow.ai?subject=PDF translate early access" style="color:#ffd166;font-weight:900">Request PDF early access →</a></p></article><article class="library-card"><h3>Works today via export</h3><ul><li>Google Slides → File ▸ Download ▸ .pptx</li><li>Google Docs → File ▸ Download ▸ .docx</li><li>Legacy .ppt / .doc → save as .pptx / .docx</li><li>Keynote → export to PowerPoint</li></ul></article></div></div></section>
-<section class="sale" id="paid-beta"><div class="container sale-grid"><div><div class="kicker">Paid Beta</div><h2>Start with the trial, then request a signed license.</h2><p class="lead">FormatFlow is taking founding customers through a direct, manual purchase flow while the beta matures. You receive the exact price, currency, tax details, seller identity and license duration in writing before paying.</p><div class="actions"><a class="btn btn-primary" href="/paid-beta.html">See the paid-beta offer</a><a class="btn btn-ghost" href="mailto:hello@formatflow.ai?subject=FormatFlow%20paid%20beta%20license">Request a quote</a></div><p class="sale-note">No Stripe or card checkout is active on this site.</p></div><article class="sale-card"><h3>What happens after you request it</h3><ul><li>We confirm the workflow, user count and country.</li><li>You receive a written quote and invoice.</li><li>After cleared payment, a signed offline key is issued to your order.</li><li>A 14-day paid-beta refund promise applies, alongside mandatory legal rights.</li></ul><p><a href="/terms.html" style="color:#5eead4;font-weight:900">Terms</a> &middot; <a href="/refund-policy.html" style="color:#5eead4;font-weight:900">Refund policy</a></p></article></div></section>
-<section class="download" id="download"><div class="container"><div class="download-box"><div><div class="kicker">Windows Download</div><h2>Download FormatFlow Studio.</h2><p>Install FormatFlow Studio and test it with your own PPTX and DOCX files. The Windows installer is hosted directly on formatflow.ai.</p><a class="btn btn-primary plausible-event-name=Download" href="FormatFlowStudioInstaller.exe" download data-track="download" data-loc="download-section">Download for Windows</a><p class="download-note">Recommended for most Windows users. Windows installer, approximately 4.6 MB.</p><div class="verify"><h3>Verify the Download</h3><p>Windows may show an unknown publisher warning until the installer is code-signed. Confirm that the file came from formatflow.ai and matches this SHA-256 checksum.</p><code>8CC873FCEBBF72C49454C8638CC80BE6BD5790ADE08CFDD554D91BB4374DE20F</code><p><a href="checksums.txt">View checksums.txt</a></p></div></div><div class="download-card"><span class="badge">Windows</span><h3>Install FormatFlow. Translate a test deck. Check the formatting.</h3><p>Built for client decks, internal presentations, onboarding documents and multilingual business materials.</p><a class="btn btn-light plausible-event-name=Download+Card" href="FormatFlowStudioInstaller.exe" download data-track="download" data-loc="download-card">Get FormatFlow Studio</a></div></div></div></section>
-<section class="cta" id="cta"><div class="container"><h2>Stop translating documents twice.</h2><p>Test the Windows app for two days. If it fits your workflow, request a quote and signed paid license.</p><a class="btn btn-light" href="/paid-beta.html">View the paid beta</a></div></section>
-</main>
-<footer><div class="container footer"><div class="brand"><span class="mark">FF</span>FormatFlow</div><div>Batch translate and format PPTX and DOCX documents in one flow.</div><nav style="display:flex;gap:18px;flex-wrap:wrap;font-size:.92rem;font-weight:700"><a href="/paid-beta.html">Paid Beta</a><a href="/terms.html">Terms</a><a href="/refund-policy.html">Refunds</a><a href="/privacy.html">Privacy</a></nav></div></footer>
-<script>
-  const demoFile = document.getElementById('demoFile');
-  const fileList = document.getElementById('fileList');
-  const runDemo = document.getElementById('runDemo');
-  const progressBar = document.getElementById('progressBar');
-  const demoStatusTitle = document.getElementById('demoStatusTitle');
-  const demoStatusText = document.getElementById('demoStatusText');
-  const resultGrid = document.getElementById('resultGrid');
-  const qaList = document.getElementById('qaList');
-  const textPreview = document.getElementById('textPreview');
-  const downloadReport = document.getElementById('downloadReport');
-  const translatePreview = document.getElementById('translatePreview');
-  const translateResult = document.getElementById('translateResult');
-  let selectedFile = null;
-  const API_BASE = location.hostname.endsWith('vercel.app') ? '' : 'https://formatflow-ai.vercel.app';
-  let lastReport = null;
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  function track(event, props){ try{ window.plausible && window.plausible(event, props ? {props} : undefined); }catch(e){} }
-  document.querySelectorAll('[data-track="download"]').forEach(el => el.addEventListener('click', () => track('Download', {location: el.dataset.loc || 'unknown'})));
-  document.querySelectorAll('[data-track="early-access"]').forEach(el => el.addEventListener('click', () => track('Early Access')));
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/" aria-label="FormatFlow home">
+        <span class="brand-mark" aria-hidden="true">FF</span>
+        <span>FormatFlow</span>
+      </a>
 
-  let jsZipPromise = null;
-  function loadJSZip(){
-    if(window.JSZip) return Promise.resolve(window.JSZip);
-    if(!jsZipPromise){
-      jsZipPromise = new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
-        s.onload = () => window.JSZip ? resolve(window.JSZip) : reject(new Error('JSZip failed to initialise.'));
-        s.onerror = () => reject(new Error('Could not load the file reader library. Check your connection and retry.'));
-        document.head.appendChild(s);
-      });
-    }
-    return jsZipPromise;
-  }
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a href="#product">Product</a>
+        <a href="#workflow">How it works</a>
+        <a href="#security">Security</a>
+        <a href="#download">Download</a>
+      </nav>
 
-  let pdfJsPromise = null;
-  function loadPdfJs(){
-    if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
-    if(!pdfJsPromise){
-      pdfJsPromise = new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
-        s.onload = () => {
-          if(window.pdfjsLib){
-            window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
-            resolve(window.pdfjsLib);
-          } else {
-            reject(new Error('PDF reader failed to initialise.'));
-          }
-        };
-        s.onerror = () => reject(new Error('Could not load the PDF reader library. Check your connection and retry.'));
-        document.head.appendChild(s);
-      });
-    }
-    return pdfJsPromise;
-  }
+      <a class="button button-primary header-action" href="#tester">Try the tester</a>
 
-  async function extractPdf(file){
-    const pdfjs = await loadPdfJs();
-    const data = await file.arrayBuffer();
-    const doc = await pdfjs.getDocument({data}).promise;
-    const pageCap = Math.min(doc.numPages, 40);
-    const texts = [];
-    for(let i = 1; i <= pageCap; i++){
-      const page = await doc.getPage(i);
-      const content = await page.getTextContent();
-      const line = normaliseText(content.items.map(item => item.str).join(' '));
-      if(line) texts.push(`Page ${i}: ${line}`);
-    }
-    return {kind:'PDF Document', units:doc.numPages, unitLabel:'pages', texts, pdfTruncated:doc.numPages > pageCap, pdfScanned:texts.join('').length < doc.numPages * 8};
-  }
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-controls="mobileNav" aria-expanded="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
 
-  function readableSize(bytes){ if(!bytes) return '0 MB'; const mb=bytes/1024/1024; return `${mb.toFixed(2)} MB`; }
-  function languageInputs(){ return Array.from(document.querySelectorAll('.language-grid input[type="checkbox"]')); }
-  function selectedLanguages(){ return languageInputs().filter(input=>input.checked).map(input=>input.value); }
-  const selectAllLangs = document.getElementById('selectAllLangs');
-  const clearAllLangs = document.getElementById('clearAllLangs');
-  const langCount = document.getElementById('langCount');
-  function syncLangControls(){ const inputs=languageInputs(); const chosen=inputs.filter(input=>input.checked).length; langCount.textContent = `${chosen} of ${inputs.length} selected`; selectAllLangs.disabled = chosen === inputs.length; clearAllLangs.disabled = chosen === 0; }
-  function setAllLanguages(checked){ languageInputs().forEach(input=>{ input.checked = checked; }); syncLangControls(); track(checked ? 'Languages Select All' : 'Languages Clear All'); }
-  selectAllLangs.addEventListener('click', ()=>setAllLanguages(true));
-  clearAllLangs.addEventListener('click', ()=>setAllLanguages(false));
-  languageInputs().forEach(input=>input.addEventListener('change', syncLangControls));
-  syncLangControls();
-  function escapeHtml(value){ return String(value || '').replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[char])); }
-  function setProgress(value){ progressBar.style.width = `${value}%`; }
-  function normaliseText(text){ return text.replace(/\s+/g,' ').trim(); }
-  function xmlToTexts(xml){ const decoded = xml.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'"); const matches = [...decoded.matchAll(/<(?:a|w):t[^>]*>([\s\S]*?)<\/(?:a|w):t>/g)].map(m => normaliseText(m[1])).filter(Boolean); return matches; }
-  async function extractDocx(zip){ const files = Object.keys(zip.files).filter(name => /^word\/(document|header\d+|footer\d+)\.xml$/i.test(name)); let texts=[]; for(const name of files){ const xml = await zip.file(name).async('string'); texts = texts.concat(xmlToTexts(xml)); } return {kind:'Word Document', units:files.length, unitLabel:'document XML parts', texts}; }
-  async function extractPptx(zip){ const slideNames = Object.keys(zip.files).filter(name => /^ppt\/slides\/slide\d+\.xml$/i.test(name)).sort((a,b)=>Number(a.match(/slide(\d+)/)?.[1]||0)-Number(b.match(/slide(\d+)/)?.[1]||0)); let texts=[]; for(const name of slideNames){ const xml = await zip.file(name).async('string'); const slideTexts = xmlToTexts(xml); if(slideTexts.length) texts.push(`Slide ${name.match(/slide(\d+)/)?.[1] || ''}: ${slideTexts.join(' | ')}`); } return {kind:'PowerPoint Presentation', units:slideNames.length, unitLabel:'slides', texts}; }
-  function buildChecks({file, kind, units, unitLabel, texts, languages}){ const words = texts.join(' ').split(/\s+/).filter(Boolean).length; const longSegments = texts.filter(t => t.length > 160).length; const checks = ['✓ File type recognised', `✓ ${kind} structure detected`, `✓ ${units} ${unitLabel || (units === 1 ? 'unit' : 'units')} scanned`, `✓ ${languages.length} target language${languages.length === 1 ? '' : 's'} selected`]; if(kind !== 'PDF Document') checks.push('✓ Review-ready naming preview generated'); if(longSegments) checks.push(`⚠ ${longSegments} long text segment${longSegments === 1 ? '' : 's'} may need fit checks after translation`); if(words > 1200) checks.push('⚠ Larger file: split review into sections for better QA'); if(file.size > 20 * 1024 * 1024) checks.push('⚠ Large file: online processing may be slower'); return {words,longSegments,checks}; }
-  function makeOutputs(fileName, languages){ if(/\.pdf$/i.test(fileName)) return []; const base = fileName.replace(/\.(pptx|docx)$/i,''); const ext = fileName.toLowerCase().endsWith('.docx') ? 'docx' : 'pptx'; return languages.map(lang => `${base}_${lang.slice(0,2).toUpperCase()}.${ext}`); }
-  function renderAnalysis(report){ resultGrid.innerHTML = `<div class="result-card"><h4>Detected File</h4><p>${escapeHtml(report.fileName)}<br>${report.fileSize}</p></div><div class="result-card"><h4>Structure</h4><p>${report.kind}<br>${report.units} ${report.unitLabel}<br>${report.words} words extracted</p></div><div class="result-card"><h4>Translation Plan</h4><p>${escapeHtml(report.languages.join(', '))}<br>${escapeHtml(report.docType)}</p></div><div class="result-card"><h4>Export Preview</h4><p>${report.outputs.length ? report.outputs.map(escapeHtml).join('<br>') : 'PDF translation is on the roadmap — this report covers analysis and QA only.'}</p></div>`; qaList.innerHTML = report.checks.map(item => `<div>${escapeHtml(item)}</div>`).join(''); textPreview.textContent = report.preview || 'No extractable text found. The file may contain images, scanned content or unsupported objects.'; downloadReport.disabled = false; translatePreview.disabled = !report.preview; }
-  function downloadHtmlReport(report){ const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>FormatFlow Review Report</title><style>body{font-family:Arial,sans-serif;max-width:900px;margin:40px auto;line-height:1.55;color:#111}h1{font-size:32px}.card{border:1px solid #ddd;border-radius:16px;padding:18px;margin:14px 0}pre{white-space:pre-wrap;background:#f6f8fa;padding:16px;border-radius:12px}</style></head><body><h1>FormatFlow Review Report</h1><div class="card"><strong>File:</strong> ${escapeHtml(report.fileName)}<br><strong>Type:</strong> ${escapeHtml(report.kind)}<br><strong>Size:</strong> ${escapeHtml(report.fileSize)}<br><strong>Structure:</strong> ${report.units} ${escapeHtml(report.unitLabel)}<br><strong>Words extracted:</strong> ${report.words}</div><div class="card"><h2>Target Languages</h2><p>${escapeHtml(report.languages.join(', '))}</p><h2>Planned Outputs</h2><ul>${report.outputs.length ? report.outputs.map(o=>`<li>${escapeHtml(o)}</li>`).join('') : '<li>PDF translation is on the roadmap — analysis and QA only today.</li>'}</ul></div><div class="card"><h2>QA Checks</h2><ul>${report.checks.map(c=>`<li>${escapeHtml(c)}</li>`).join('')}</ul></div><div class="card"><h2>Extracted Text Preview</h2><pre>${escapeHtml(report.preview)}</pre></div><p>This report was generated locally in the browser by the FormatFlow online file tester.</p></body></html>`; const blob = new Blob([html], {type:'text/html'}); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `${report.fileName.replace(/\.(pptx|docx|pdf)$/i,'')}_FormatFlow_Report.html`; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(url); }
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile navigation">
+      <a href="#product">Product</a>
+      <a href="#workflow">How it works</a>
+      <a href="#security">Security</a>
+      <a href="#download">Download</a>
+      <a class="button button-primary" href="#tester">Try the tester</a>
+    </nav>
+  </header>
 
-  demoFile.addEventListener('change',(event)=>{ const file=event.target.files && event.target.files[0]; if(!file) return; const lower=file.name.toLowerCase(); selectedFile = file; downloadReport.disabled = true; lastReport = null; if(!lower.endsWith('.pptx') && !lower.endsWith('.docx') && !lower.endsWith('.pdf')){ fileList.innerHTML=`<div class="file-item"><span>${escapeHtml(file.name)}</span><span>Unsupported</span></div>`; demoStatusTitle.textContent='Unsupported file type'; demoStatusText.textContent='Please choose a PPTX, DOCX or PDF file for the FormatFlow tester.'; track('Tester Unsupported', {ext: lower.includes('.') ? lower.split('.').pop() : 'none'}); setProgress(0); return;} fileList.innerHTML=`<div class="file-item"><span>${escapeHtml(file.name)}</span><span>${lower.endsWith('.pptx')?'PPTX':lower.endsWith('.docx')?'DOCX':'PDF'} · ${readableSize(file.size)}</span></div>`; demoStatusTitle.textContent='File ready'; demoStatusText.textContent='Click Analyse File to inspect the document structure and text.'; setProgress(10); textPreview.textContent='Ready to analyse.'; });
-  runDemo.addEventListener('click', async ()=>{ try{ if(!selectedFile){ demoStatusTitle.textContent='Choose a file first'; demoStatusText.textContent='Upload a PPTX or DOCX file before running the tester.'; return;} const languages=selectedLanguages(); if(!languages.length){ demoStatusTitle.textContent='Choose at least one language'; demoStatusText.textContent='Select one or more target languages before analysing.'; return;} runDemo.disabled=true; downloadReport.disabled=true; setProgress(20); demoStatusTitle.textContent='Reading file locally'; const lower=selectedFile.name.toLowerCase(); let extracted; if(lower.endsWith('.pdf')){ demoStatusText.textContent='Opening the PDF in your browser.'; setProgress(40); demoStatusTitle.textContent='Extracting text and structure'; extracted = await extractPdf(selectedFile); } else { demoStatusText.textContent='Opening the Office document package in your browser.'; const JSZipLib = await loadJSZip(); const zip = await JSZipLib.loadAsync(selectedFile); setProgress(50); demoStatusTitle.textContent='Extracting text and structure'; extracted = lower.endsWith('.docx') ? await extractDocx(zip) : await extractPptx(zip); } setProgress(78); demoStatusTitle.textContent='Running QA checks'; const docType = document.getElementById('docType').value; const finalDocType = docType === 'Auto-detect' ? extracted.kind : docType; const checks = buildChecks({file:selectedFile, kind:extracted.kind, units:extracted.units, unitLabel:extracted.unitLabel, texts:extracted.texts, languages}); if(lower.endsWith('.pdf')){ if(extracted.pdfScanned && checks.words < 20){ checks.checks.push('⚠ Low text layer: this PDF may be scanned. OCR is not supported yet.'); } if(extracted.pdfTruncated){ checks.checks.push('⚠ Large PDF: this preview analysed the first 40 pages.'); } checks.checks.push('ℹ PDF translation is on the roadmap — this report covers analysis and QA only.'); } const outputs = makeOutputs(selectedFile.name, languages); const preview = extracted.texts.slice(0, 30).join('\n\n').slice(0, 4500); lastReport = {fileName:selectedFile.name,fileSize:readableSize(selectedFile.size),kind:extracted.kind,docType:finalDocType,units:extracted.units,unitLabel:extracted.unitLabel,words:checks.words,languages,outputs,checks:checks.checks,preview}; setProgress(100); demoStatusTitle.textContent='File analysis complete'; demoStatusText.textContent='FormatFlow has extracted text, checked structure and prepared a review report.'; renderAnalysis(lastReport); if(lower.endsWith('.pdf')){ translateResult.innerHTML = '<div class="privacy-note" style="margin-top:18px">FormatFlow Studio translates PPTX and DOCX today. <strong>PDF translate is the next format on the roadmap</strong> — Translate Preview below works on this PDF\'s text, and layout-preserving PDF export is coming. <a class="plausible-event-name=PDF+Early+Access" href="mailto:hello@formatflow.ai?subject=PDF translate early access" style="color:#bfffea;font-weight:800;text-decoration:underline">Request PDF early access</a>.</div>'; } track('Tester Analyse', {type: extracted.kind}); } catch(error){ console.error(error); demoStatusTitle.textContent='Analysis failed'; demoStatusText.textContent=error.message || 'The file could not be analysed in the browser.'; setProgress(0); } finally{ runDemo.disabled=false; } });
-  downloadReport.addEventListener('click',()=>{ if(lastReport){ downloadHtmlReport(lastReport); track('Report Download'); } });
+  <main id="main">
+    <section class="hero" id="product">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <h1>
+            <span>Translate the</span>
+            <span>document.</span>
+            <span class="accent">Keep the design.</span>
+          </h1>
+          <p class="hero-lead">FormatFlow turns PPTX and DOCX files into review-ready multilingual documents—without uploading them to our servers.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#tester">Try the online tester</a>
+            <a class="text-link plausible-event-name=Download+Hero" href="/FormatFlowStudioInstaller.exe" download data-track="download" data-loc="hero">Download for Windows</a>
+          </div>
+        </div>
 
-  function renderTranslations(data){
-    const blocks = (data.translations || []).map(t => `<div class="result-card"><h4>${escapeHtml(t.language || 'Translation')}</h4><p>${escapeHtml(t.translatedPreview || '').slice(0,1200)}</p>${(t.notes && t.notes.length) ? `<div class="qa-list">${t.notes.map(n=>`<div>• ${escapeHtml(n)}</div>`).join('')}</div>` : ''}</div>`).join('');
-    const checks = (data.qaChecks || []).map(c=>`<div>✓ ${escapeHtml(c)}</div>`).join('');
-    translateResult.innerHTML = `<div class="privacy-note" style="margin-top:18px">${escapeHtml(data.summary || 'Translation preview generated. Review before client use.')}</div><div class="result-grid" style="margin-top:14px">${blocks}</div>${checks ? `<div class="qa-list" style="margin-top:14px">${checks}</div>` : ''}`;
-  }
+        <div class="product-window" aria-label="FormatFlow Studio product preview">
+          <div class="window-bar">
+            <span class="window-mark" aria-hidden="true">FF</span>
+            <span>FormatFlow Studio</span>
+            <span class="window-controls" aria-hidden="true">— □ ×</span>
+          </div>
 
-  translatePreview.addEventListener('click', async ()=>{
-    if(!lastReport || !lastReport.preview){ return; }
-    translatePreview.disabled = true;
-    const original = translatePreview.textContent;
-    translatePreview.textContent = 'Translating…';
-    translateResult.innerHTML = '<div class="privacy-note" style="margin-top:18px">Contacting the FormatFlow translation preview service…</div>';
-    track('Translate Preview', {type: lastReport.kind});
-    try{
-      const res = await fetch(API_BASE + '/api/translate-demo', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({
-          fileName: lastReport.fileName,
-          documentType: lastReport.docType || lastReport.kind,
-          toneNotes: document.getElementById('toneNotes').value,
-          sourceText: lastReport.preview,
-          targetLanguages: lastReport.languages,
-          model: document.getElementById('translateModel').value
-        })
-      });
-      const data = await res.json().catch(()=>({error:'Unexpected response from the server.'}));
-      if(res.status === 500 && /OPENAI_API_KEY/i.test(data.error || '')){
-        translateResult.innerHTML = '<div class="privacy-note" style="margin-top:18px">Online translation preview is not enabled on this deployment yet. The full translation and export workflow lives in <strong>FormatFlow Studio</strong> for Windows — download it above to translate this file end to end.</div>';
-      } else if(res.status === 429){
-        translateResult.innerHTML = '<div class="privacy-note" style="margin-top:18px">You’ve hit the preview rate limit. Please wait a minute and try again, or use the Windows app for unlimited translation.</div>';
-      } else if(!res.ok){
-        translateResult.innerHTML = `<div class="privacy-note" style="margin-top:18px">Preview failed: ${escapeHtml(data.error || ('HTTP '+res.status))}. You can still use the Windows app for full translation.</div>`;
-      } else {
-        renderTranslations(data);
-      }
-    }catch(err){
-      translateResult.innerHTML = `<div class="privacy-note" style="margin-top:18px">Could not reach the translation preview service: ${escapeHtml(err.message || 'network error')}.</div>`;
-    }finally{
-      translatePreview.textContent = original;
-      translatePreview.disabled = false;
-    }
-  });
+          <div class="window-workspace">
+            <section class="workspace-column" aria-label="Source file">
+              <h3>Source file</h3>
+              <div class="file-sheet" aria-hidden="true"><strong>PPTX</strong></div>
+              <p class="file-name">Q2_Investor_Update.pptx</p>
+              <p class="file-meta">24 slides · 8.4 MB</p>
+              <div class="local-status">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M20 11.5V7l-8-4-8 4v5c0 5 3.4 8.1 8 9.5 2.4-.7 4.4-1.9 5.8-3.6" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="m9.2 12.3 1.8 1.8 4-4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Loaded locally
+              </div>
+            </section>
 
-  if('serviceWorker' in navigator){
-    window.addEventListener('load', () => { navigator.serviceWorker.register('/service-worker.js').catch(()=>{}); });
-  }
-</script>
+            <section class="workspace-column" aria-label="Target languages">
+              <h3>Target languages · 3 selected</h3>
+              <div class="language-list">
+                <div class="language-row">
+                  <span>CN</span>
+                  <span>Chinese <span class="language-code">zh-CN</span></span>
+                  <span class="language-check" aria-hidden="true">✓</span>
+                </div>
+                <div class="language-row">
+                  <span>FR</span>
+                  <span>French <span class="language-code">fr-FR</span></span>
+                  <span class="language-check" aria-hidden="true">✓</span>
+                </div>
+                <div class="language-row">
+                  <span>DE</span>
+                  <span>German <span class="language-code">de-DE</span></span>
+                  <span class="language-check" aria-hidden="true">✓</span>
+                </div>
+              </div>
+            </section>
+
+            <section class="workspace-column" aria-label="Translation and review status">
+              <h3>Translation and review</h3>
+              <div class="review-ring">100%</div>
+              <p class="review-copy">Complete</p>
+              <p class="review-subcopy">Ready for review</p>
+            </section>
+
+            <span class="flow-line" aria-hidden="true"></span>
+          </div>
+
+          <section class="review-panel" aria-label="Review result">
+            <h3>Review pack</h3>
+            <div class="review-complete">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m6.8 12.3 3.2 3.2 7.2-7.2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              All translations complete. Files were processed locally on this machine.
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="proof" id="security" aria-label="Why FormatFlow">
+      <div class="container proof-grid">
+        <article class="proof-item">
+          <span class="proof-number">01</span>
+          <h2>Local files stay local.</h2>
+          <p>Your documents never pass through FormatFlow’s servers.</p>
+        </article>
+        <article class="proof-item">
+          <span class="proof-number">02</span>
+          <h2>Structure stays intact.</h2>
+          <p>Slides, styles and document structure remain part of the workflow.</p>
+        </article>
+        <article class="proof-item">
+          <span class="proof-number">03</span>
+          <h2>Every change is reviewable.</h2>
+          <p>Overflow and layout risks are flagged before delivery.</p>
+        </article>
+        <article class="proof-item">
+          <span class="proof-number">04</span>
+          <h2>Your provider. Your API key.</h2>
+          <p>Translation connects directly under the settings you control.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section workflow" id="workflow">
+      <div class="container">
+        <div class="section-heading">
+          <h2>Three steps from source to signed-off.</h2>
+          <p>A focused workflow for turning one source batch into translated, review-ready documents.</p>
+        </div>
+
+        <div class="workflow-rail">
+          <article class="workflow-step">
+            <div class="step-top">
+              <span class="step-number" aria-hidden="true">1</span>
+              <span class="step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+                  <path d="M14 2v5h5M12 18v-7m-3 3 3-3 3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+            <h3>Add the files</h3>
+            <p>Drop in PPTX or DOCX files.</p>
+          </article>
+
+          <article class="workflow-step">
+            <div class="step-top">
+              <span class="step-number" aria-hidden="true">2</span>
+              <span class="step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 7h10M18 7h2M4 17h2M10 17h10M4 12h4M12 12h8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                  <circle cx="16" cy="7" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+                  <circle cx="8" cy="17" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+                  <circle cx="10" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+                </svg>
+              </span>
+            </div>
+            <h3>Set the rules</h3>
+            <p>Choose languages, glossary and layout controls.</p>
+          </article>
+
+          <article class="workflow-step">
+            <div class="step-top">
+              <span class="step-number" aria-hidden="true">3</span>
+              <span class="step-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/>
+                  <path d="m8.2 12.2 2.5 2.5 5.4-5.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            </div>
+            <h3>Review and export</h3>
+            <p>Resolve flagged changes, then export clean files.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section tester" id="tester">
+      <div class="container">
+        <div class="section-heading">
+          <h2>Test a real file in your browser.</h2>
+          <p>Your file is analysed locally. Nothing is uploaded.</p>
+        </div>
+
+        <div class="tester-shell">
+          <div class="tester-input">
+            <label class="drop-zone" id="dropZone" for="demoFile">
+              <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M16 16l-4-4-4 4M12 12v9M20.4 17.5a4.5 4.5 0 0 0-1.4-8.8A7 7 0 0 0 5.5 7.1 4 4 0 0 0 5 15h2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <strong>Drop a PPTX, DOCX or PDF</strong>
+                <span>or click to browse your files</span>
+              </span>
+              <input id="demoFile" type="file" accept=".pptx,.docx,.pdf">
+            </label>
+
+            <div class="file-list" id="fileList" aria-live="polite">
+              <div class="file-item"><span>No file selected</span><span>Waiting</span></div>
+            </div>
+
+            <button class="sample-button" id="sampleDeck" type="button">Use a sample deck</button>
+
+            <div class="field-group">
+              <div class="field-header">
+                <div>
+                  <h3 id="langLabel">Target languages</h3>
+                  <span class="lang-count" id="langCount">2 of 4 selected</span>
+                </div>
+                <div class="lang-actions">
+                  <button type="button" id="selectAllLangs">Select all</button>
+                  <button type="button" id="clearAllLangs">Clear all</button>
+                </div>
+              </div>
+
+              <div class="language-grid" role="group" aria-labelledby="langLabel">
+                <label class="language-option"><input type="checkbox" value="Spanish" checked><span>Spanish</span></label>
+                <label class="language-option"><input type="checkbox" value="French" checked><span>French</span></label>
+                <label class="language-option"><input type="checkbox" value="German"><span>German</span></label>
+                <label class="language-option"><input type="checkbox" value="Arabic"><span>Arabic</span></label>
+              </div>
+            </div>
+
+            <button class="button button-primary tester-run" id="runDemo" type="button">Analyse file</button>
+
+            <p class="privacy-note">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="5" y="10" width="14" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+              </svg>
+              Runs locally in your browser
+            </p>
+
+            <details class="advanced-controls">
+              <summary>Advanced preview settings</summary>
+              <div class="advanced-grid">
+                <label>Document type
+                  <select id="docType">
+                    <option>Auto-detect</option>
+                    <option>PowerPoint Presentation</option>
+                    <option>Word Document</option>
+                    <option>Client Proposal</option>
+                    <option>Training Material</option>
+                  </select>
+                </label>
+                <label>Translation model
+                  <select id="translateModel">
+                    <option value="fast" selected>GPT-4o mini — fast, lowest cost</option>
+                    <option value="quality">GPT-4o — higher quality</option>
+                    <option value="latest">ChatGPT 5.6 — newest</option>
+                  </select>
+                </label>
+                <label>Glossary and tone notes
+                  <textarea id="toneNotes">Use a clear business tone. Keep product names, headings and technical terms consistent.</textarea>
+                </label>
+              </div>
+            </details>
+          </div>
+
+          <div class="tester-output" aria-live="polite">
+            <div class="progress-steps" aria-label="Analysis progress">
+              <span class="progress-step">Upload</span>
+              <span class="progress-step">Choose languages</span>
+              <span class="progress-step">Review report</span>
+            </div>
+
+            <div class="status-card">
+              <div class="status-head">
+                <div>
+                  <h3 id="demoStatusTitle">Ready to analyse</h3>
+                  <p id="demoStatusText">Choose a file or load the sample deck to begin.</p>
+                </div>
+              </div>
+              <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+            </div>
+
+            <div class="result-grid" id="resultGrid">
+              <div class="result-card"><h4>Detected file</h4><p>Waiting for a file</p></div>
+              <div class="result-card"><h4>Structure</h4><p>Not analysed yet</p></div>
+              <div class="result-card"><h4>Layout risks</h4><p>Review starts after analysis</p></div>
+              <div class="result-card"><h4>Review pack</h4><p>Report will appear here</p></div>
+            </div>
+
+            <div class="qa-list" id="qaList">
+              <div>Ready for PPTX, DOCX or PDF analysis</div>
+            </div>
+
+            <pre class="text-preview" id="textPreview">Extracted text preview will appear here.</pre>
+
+            <div class="output-actions">
+              <button class="button button-secondary" id="downloadReport" type="button" disabled>Download review report</button>
+              <button class="button button-quiet" id="translatePreview" type="button" disabled>Translate preview</button>
+            </div>
+
+            <div id="translateResult"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="download" id="download">
+      <div class="container">
+        <div class="download-grid">
+          <div class="download-copy">
+            <h2>Ready to test it on a real deck?</h2>
+            <p>Install FormatFlow Studio for Windows and run the complete workflow locally.</p>
+            <div class="download-actions">
+              <a class="button button-primary plausible-event-name=Download" href="/FormatFlowStudioInstaller.exe" download data-track="download" data-loc="download">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="currentColor"/>
+                </svg>
+                Download for Windows
+              </a>
+              <a class="text-link" href="/paid-beta.html">View the two-day trial</a>
+            </div>
+            <p class="download-meta">Version 0.3.0 · Windows 10/11 · 4.6 MB · Released 8 June 2026</p>
+            <div class="verified-line">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m7.5 12.2 3 3 6-6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Published checksum available below
+            </div>
+          </div>
+
+          <div class="download-panel">
+            <section class="package-info" aria-labelledby="packageHeading">
+              <h3 id="packageHeading">Installer package</h3>
+              <div class="package-list">
+                <div class="package-row">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m12 2 8 4.5v11L12 22l-8-4.5v-11L12 2Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                    <path d="m4.4 6.8 7.6 4.4 7.6-4.4M12 11.2V22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                  </svg>
+                  <span><strong>FormatFlowStudioInstaller.exe</strong><span>Windows application</span></span>
+                </div>
+                <div class="package-row">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 19h14M7 15h10l-1.5-9h-7L7 15Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span><strong>4.6 MB</strong><span>4,838,244 bytes</span></span>
+                </div>
+                <div class="package-row">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 2v3M18 2v3M3 9h18M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span><strong>Released 8 June 2026</strong><span>Version 0.3.0</span></span>
+                </div>
+                <div class="package-row">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+                  </svg>
+                  <span><strong>Windows 10/11</strong><span>64-bit desktop</span></span>
+                </div>
+              </div>
+            </section>
+
+            <section class="verification" aria-labelledby="verifyHeading">
+              <h3 id="verifyHeading">Verify your download</h3>
+              <p>Windows may show an unknown-publisher warning until the installer is code-signed.</p>
+              <div class="checksum-box">
+                <code id="checksum" title="SHA-256 checksum" data-full="8CC873FCEBBF72C49454C8638CC80BE6BD5790ADE08CFDD554D91BB4374DE20F">8CC873FC…4374DE20F</code>
+                <button class="copy-button" id="copyChecksum" type="button">
+                  <span>Copy checksum</span>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="9" y="9" width="11" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/>
+                    <path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3" fill="none" stroke="currentColor" stroke-width="1.7"/>
+                  </svg>
+                </button>
+              </div>
+              <a class="text-link" href="/checksums.txt">View checksums.txt</a>
+            </section>
+          </div>
+        </div>
+
+        <section class="faq" aria-labelledby="faqHeading">
+          <h2 id="faqHeading">Questions before you install.</h2>
+          <div class="faq-list">
+            <details class="faq-item" open>
+              <summary>Do my files leave my computer?</summary>
+              <div class="faq-answer">No. FormatFlow Studio reads, processes and saves files on your Windows machine. Translation connects directly to the AI provider you select using your own API key; your documents do not pass through FormatFlow’s servers.</div>
+            </details>
+            <details class="faq-item">
+              <summary>Which formats can I translate?</summary>
+              <div class="faq-answer">FormatFlow Studio translates PowerPoint (.pptx) and Word (.docx) files today. The browser tester can also analyse PDFs and prepare a QA report, while layout-preserving PDF translation remains on the roadmap.</div>
+            </details>
+            <details class="faq-item">
+              <summary>How does the two-day trial work?</summary>
+              <div class="faq-answer">Install the Windows app and activate the included two-day trial to test the full workflow with your own documents. Your AI provider may charge separately for model usage under your own API key.</div>
+            </details>
+            <details class="faq-item">
+              <summary>Why might Windows show a warning?</summary>
+              <div class="faq-answer">The current installer has not yet been code-signed, so Windows may display an unknown-publisher warning. Download only from formatflow.ai and compare the file’s SHA-256 value with the published checksum.</div>
+            </details>
+            <details class="faq-item">
+              <summary>What happens after the trial?</summary>
+              <div class="faq-answer">If FormatFlow fits your workflow, request a written paid-beta quote. You receive the price, license duration, tax details and terms before paying; there is no automated card checkout on this site.</div>
+            </details>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/" aria-label="FormatFlow home">
+          <span class="brand-mark" aria-hidden="true">FF</span>
+          <span>FormatFlow</span>
+        </a>
+        <p>Document translation without the rebuild.</p>
+      </div>
+      <div class="footer-right">
+        <nav class="footer-links" aria-label="Footer navigation">
+          <a href="#product">Product</a>
+          <a href="#security">Security</a>
+          <a href="#download">Download</a>
+          <a href="/terms.html">Terms</a>
+          <a href="/privacy.html">Privacy</a>
+        </nav>
+        <a class="footer-contact" href="mailto:hello@formatflow.ai">hello@formatflow.ai</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
