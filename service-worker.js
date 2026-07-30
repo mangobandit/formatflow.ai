@@ -6,11 +6,15 @@
 //   * Navigations offline: fall back to the cached home page.
 // Bump VERSION on release: activate() drops every cache from an older version,
 // so returning visitors stop being served assets from a previous deploy.
-const VERSION = "ff-v4";
+const VERSION = "ff-v5";
 const STATIC_CACHE = `${VERSION}-static`;
 const PRECACHE = [
   "/",
   "/index.html",
+  "/paid-beta.html",
+  "/terms.html",
+  "/refund-policy.html",
+  "/privacy.html",
   "/manifest.webmanifest",
   "/icon-192.png",
   "/icon-512.png",
