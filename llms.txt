@@ -5,6 +5,8 @@
 Website: https://formatflow.ai/
 Download: https://formatflow.ai/FormatFlowStudioInstaller.exe
 Platform: Windows
+Current Studio version: 0.5.2
+Adobe InDesign plugin: https://formatflow.ai/indesign-plugin.html
 Primary use cases: PPTX translation, DOCX translation, batch document translation, multilingual presentation workflows, layout-preserving document formatting, glossary and QA review workflows.
 
 ## Product Summary
@@ -17,6 +19,9 @@ FormatFlow helps teams translate business documents without rebuilding slides or
 - Layout preservation checks
 - Overflow detection
 - Glossary and translation memory support
+- GPT-5.6 Sol, Terra and Luna model choices
+- Check/uncheck-all target-language control
+- Adobe InDesign UXP plugin with a copy-original-first translation workflow
 - Corporate review and QA workflow support
 - Safe Corporate Mode: an optional translation setting for conservative, business-appropriate phrasing
 - Local-first by design: documents are processed on your machine and never touch FormatFlow servers; translation runs under your own API key
