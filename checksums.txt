@@ -3,9 +3,13 @@
 # Windows:  certutil -hashfile FormatFlowStudioInstaller.exe SHA256
 # macOS/Linux:  shasum -a 256 FormatFlowStudioInstaller.exe
 
-FormatFlowStudioInstaller.exe  SHA256: 8CC873FCEBBF72C49454C8638CC80BE6BD5790ADE08CFDD554D91BB4374DE20F
+FormatFlowStudioInstaller.exe  SHA256: 0DCD72A4D3C4D241C15C6891D5EC25F65E2C0C69F2F56B84981508BBDA46DE90
 
 # Legacy download path, kept so older links keep working. It is a byte copy of
 # the installer above, so the SHA-256 is intentionally identical. Refresh it
 # alongside every new build or that path starts serving a stale release.
-downloads/FormatFlow-Studio-2-Day-Trial.exe  SHA256: 8CC873FCEBBF72C49454C8638CC80BE6BD5790ADE08CFDD554D91BB4374DE20F
+downloads/FormatFlow-Studio-2-Day-Trial.exe  SHA256: 0DCD72A4D3C4D241C15C6891D5EC25F65E2C0C69F2F56B84981508BBDA46DE90
+
+# Versioned desktop release and Adobe InDesign plugin.
+downloads/FormatFlow-Studio-0.5.2.exe  SHA256: 0DCD72A4D3C4D241C15C6891D5EC25F65E2C0C69F2F56B84981508BBDA46DE90
+downloads/FormatFlow-Translate-InDesign-v3.1.0-FULL-RESTORED.zip  SHA256: 0422D0F3AFDBEDC19160734C8D8BF8709011273DE140660DA20A52DBE1F7BEFA

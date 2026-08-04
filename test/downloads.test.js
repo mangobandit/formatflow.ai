@@ -17,6 +17,7 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PRIMARY_INSTALLER = "FormatFlowStudioInstaller.exe";
 // Kept so older download links keep working; must track the primary installer.
 const LEGACY_INSTALLER = "downloads/FormatFlow-Studio-2-Day-Trial.exe";
+const INDESIGN_PLUGIN = "downloads/FormatFlow-Translate-InDesign-v3.1.0-FULL-RESTORED.zip";
 
 const read = (rel) => readFileSync(path.join(ROOT, rel));
 const sha256 = (rel) => createHash("sha256").update(read(rel)).digest("hex").toUpperCase();
@@ -47,16 +48,30 @@ test("legacy download is the same build as the primary installer", () => {
 test("every checksum in checksums.txt matches its file", () => {
   const lines = readFileSync(path.join(ROOT, "checksums.txt"), "utf8").split("\n");
   const entries = lines
-    .map((line) => line.match(/^(\S+\.exe)\s+SHA256:\s*([0-9A-Fa-f]{64})/))
+    .map((line) => line.match(/^(\S+\.(?:exe|zip|ccx))\s+SHA256:\s*([0-9A-Fa-f]{64})/))
     .filter(Boolean)
     .map((m) => ({ file: m[1], published: m[2].toUpperCase() }));
 
-  assert.ok(entries.length >= 2, "expected checksums.txt to cover both download paths");
+  assert.ok(entries.length >= 4, "expected checksums.txt to cover Studio and InDesign downloads");
 
   for (const { file, published } of entries) {
     assert.ok(existsSync(path.join(ROOT, file)), `checksums.txt lists a missing file: ${file}`);
     assert.equal(sha256(file), published, `checksums.txt is stale for ${file}`);
   }
+});
+
+test("InDesign page ships the restored 3.1.0 plugin package", () => {
+  assert.ok(existsSync(path.join(ROOT, INDESIGN_PLUGIN)), `${INDESIGN_PLUGIN} is missing`);
+  const bytes = read(INDESIGN_PLUGIN);
+  assert.equal(bytes.subarray(0, 2).toString("latin1"), "PK", "plugin download is not a ZIP package");
+  assert.ok(bytes.length > 100_000, "plugin package is suspiciously small");
+
+  const html = readFileSync(path.join(ROOT, "indesign-plugin.html"), "utf8");
+  assert.match(html, /Version 3\.1\.0/i);
+  assert.match(html, /Overset Text Fixer/i);
+  assert.match(html, /Auto, Dark and Light themes/i);
+  assert.match(html, /check\/uncheck all/i);
+  assert.ok(html.includes(`/${INDESIGN_PLUGIN}`), "InDesign page does not link the restored package");
 });
 
 test("every checksum published in HTML matches the shipping installer", () => {
