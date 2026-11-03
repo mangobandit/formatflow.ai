@@ -251,7 +251,7 @@
       <div class="container">
         <div class="section-heading">
           <h2>Test a real file in your browser.</h2>
-          <p>Your file is analysed locally. Nothing is uploaded.</p>
+          <p>Analysis stays in your browser. Optional AI translation sends only the text preview with your permission.</p>
         </div>
 
         <div class="tester-shell">
@@ -262,7 +262,7 @@
                   <path d="M16 16l-4-4-4 4M12 12v9M20.4 17.5a4.5 4.5 0 0 0-1.4-8.8A7 7 0 0 0 5.5 7.1 4 4 0 0 0 5 15h2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <strong>Drop a PPTX, DOCX or PDF</strong>
-                <span>or click to browse your files</span>
+                <span>or click to browse your files · up to 50 MB</span>
               </span>
               <input id="demoFile" type="file" accept=".pptx,.docx,.pdf">
             </label>
@@ -317,9 +317,9 @@
                 </label>
                 <label>Translation model
                   <select id="translateModel">
-                    <option value="fast" selected>GPT-4o mini — fast, lowest cost</option>
-                    <option value="quality">GPT-4o — higher quality</option>
-                    <option value="latest">ChatGPT 5.6 — newest</option>
+                    <option value="fast" selected>GPT-6 Luna - fast, lowest cost</option>
+                    <option value="quality">GPT-6.1 Terra - balanced</option>
+                    <option value="latest">GPT-6.1 Sol - higher quality</option>
                   </select>
                 </label>
                 <label>Glossary and tone notes
@@ -331,7 +331,7 @@
 
           <div class="tester-output" aria-live="polite">
             <div class="progress-steps" aria-label="Analysis progress">
-              <span class="progress-step">Upload</span>
+              <span class="progress-step">Choose file</span>
               <span class="progress-step">Choose languages</span>
               <span class="progress-step">Review report</span>
             </div>
@@ -358,6 +358,11 @@
             </div>
 
             <pre class="text-preview" id="textPreview">Extracted text preview will appear here.</pre>
+
+            <label class="preview-consent">
+              <input id="previewConsent" type="checkbox">
+              <span>Allow FormatFlow to send up to 4,000 characters of this text preview, its file name and my tone notes to OpenAI for translation. The original file stays in my browser. <a href="/privacy.html">Privacy details</a></span>
+            </label>
 
             <div class="output-actions">
               <button class="button button-secondary" id="downloadReport" type="button" disabled>Download review report</button>
@@ -496,3 +501,4 @@
   </footer>
 </body>
 </html>
+

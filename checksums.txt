@@ -13,3 +13,7 @@ downloads/FormatFlow-Studio-2-Day-Trial.exe  SHA256: 0DCD72A4D3C4D241C15C6891D5E
 # Versioned desktop release and Adobe InDesign plugin.
 downloads/FormatFlow-Studio-0.5.2.exe  SHA256: 0DCD72A4D3C4D241C15C6891D5EC25F65E2C0C69F2F56B84981508BBDA46DE90
 downloads/FormatFlow-Translate-InDesign-v3.1.0-FULL-RESTORED.zip  SHA256: 0422D0F3AFDBEDC19160734C8D8BF8709011273DE140660DA20A52DBE1F7BEFA
+
+
+# InDesign 3.3.0 development preview: automated checks only; host testing pending.
+downloads/FormatFlow-Translate-InDesign-v3.3.0-PREVIEW.zip  SHA256: 888521A54461954E993D38C71620FBA9B60F59761274A60FE25723B7499878B5

@@ -11,13 +11,14 @@ import { createHash } from "node:crypto";
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { inflateRawSync } from "node:zlib";
 
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const PRIMARY_INSTALLER = "FormatFlowStudioInstaller.exe";
 // Kept so older download links keep working; must track the primary installer.
 const LEGACY_INSTALLER = "downloads/FormatFlow-Studio-2-Day-Trial.exe";
-const INDESIGN_PLUGIN = "downloads/FormatFlow-Translate-InDesign-v3.1.0-FULL-RESTORED.zip";
+const INDESIGN_PLUGIN = "downloads/FormatFlow-Translate-InDesign-v3.3.0-PREVIEW.zip";
 
 const read = (rel) => readFileSync(path.join(ROOT, rel));
 const sha256 = (rel) => createHash("sha256").update(read(rel)).digest("hex").toUpperCase();
@@ -60,38 +61,77 @@ test("every checksum in checksums.txt matches its file", () => {
   }
 });
 
-test("InDesign page ships the restored 3.1.0 plugin package", () => {
+test("InDesign page ships a complete 3.3.0 development preview package", () => {
   assert.ok(existsSync(path.join(ROOT, INDESIGN_PLUGIN)), `${INDESIGN_PLUGIN} is missing`);
   const bytes = read(INDESIGN_PLUGIN);
   assert.equal(bytes.subarray(0, 2).toString("latin1"), "PK", "plugin download is not a ZIP package");
-  assert.ok(bytes.length > 100_000, "plugin package is suspiciously small");
+  assert.ok(bytes.length > 20_000, "plugin package is suspiciously small");
+
+  const files = zipEntries(bytes);
+  const manifest = JSON.parse(files.get("manifest.json").toString("utf8"));
+  assert.equal(manifest.version, "3.3.0");
+  assert.equal(manifest.host.app, "ID");
+  const panel = files.get("index.html").toString("utf8");
+  for (const match of panel.matchAll(/(?:src|href)="([^"?#]+\.(?:js|css))"/g)) {
+    assert.ok(files.has(match[1]), `plugin panel references missing runtime file: ${match[1]}`);
+  }
+  for (const [name, content] of files) {
+    assert.doesNotMatch(name, /(?:^|\/)(?:\.git|node_modules|\.env)(?:\/|$)/);
+    if (name.startsWith("src/") && name.endsWith(".js")) new Function(content.toString("utf8"));
+  }
 
   const html = readFileSync(path.join(ROOT, "indesign-plugin.html"), "utf8");
-  assert.match(html, /Version 3\.1\.0/i);
+  assert.match(html, /Version 3\.3\.0 development preview/i);
+  assert.match(html, /still needs testing inside Adobe InDesign/i);
   assert.match(html, /Overset Text Fixer/i);
   assert.match(html, /Auto, Dark and Light themes/i);
   assert.match(html, /check\/uncheck all/i);
-  assert.ok(html.includes(`/${INDESIGN_PLUGIN}`), "InDesign page does not link the restored package");
+  assert.ok(html.includes(`/${INDESIGN_PLUGIN}`), "InDesign page does not link the preview package");
+  assert.match(html, new RegExp(`<code id="pluginChecksum">${sha256(INDESIGN_PLUGIN)}</code>`));
 });
 
-test("every checksum published in HTML matches the shipping installer", () => {
-  const expected = sha256(PRIMARY_INSTALLER);
+test("every checksum published in HTML matches a download advertised on that page", () => {
   let found = 0;
 
   for (const file of htmlFiles()) {
     const html = readFileSync(path.join(ROOT, file), "utf8");
+    const downloads = [...html.matchAll(/(?:href=|downloadUrl"\s*:\s*)"([^"?#]+\.(?:exe|zip|ccx))"/g)]
+      .map((match) => hrefToRepoPath(match[1]));
+    const expected = new Set(downloads.map(sha256));
     for (const match of html.matchAll(/\b[0-9a-fA-F]{64}\b/g)) {
       found += 1;
-      assert.equal(
-        match[0].toUpperCase(),
-        expected,
-        `${file} publishes a checksum that is not the current installer's`,
-      );
+      assert.ok(expected.has(match[0].toUpperCase()), `${file} publishes a checksum that does not match an advertised download`);
     }
   }
 
   assert.ok(found > 0, "no published checksum found in any page — did the verify block get dropped?");
 });
+
+function zipEntries(bytes) {
+  let end = bytes.length - 22;
+  while (end >= Math.max(0, bytes.length - 65_557) && bytes.readUInt32LE(end) !== 0x06054b50) end--;
+  assert.ok(end >= 0 && bytes.readUInt32LE(end) === 0x06054b50, "ZIP directory is missing");
+  const count = bytes.readUInt16LE(end + 10);
+  let cursor = bytes.readUInt32LE(end + 16);
+  const result = new Map();
+  for (let index = 0; index < count; index++) {
+    assert.equal(bytes.readUInt32LE(cursor), 0x02014b50);
+    const method = bytes.readUInt16LE(cursor + 10);
+    const size = bytes.readUInt32LE(cursor + 20);
+    const nameLength = bytes.readUInt16LE(cursor + 28);
+    const extraLength = bytes.readUInt16LE(cursor + 30);
+    const commentLength = bytes.readUInt16LE(cursor + 32);
+    const offset = bytes.readUInt32LE(cursor + 42);
+    const name = bytes.subarray(cursor + 46, cursor + 46 + nameLength).toString("utf8");
+    assert.equal(bytes.readUInt32LE(offset), 0x04034b50);
+    const dataOffset = offset + 30 + bytes.readUInt16LE(offset + 26) + bytes.readUInt16LE(offset + 28);
+    const compressed = bytes.subarray(dataOffset, dataOffset + size);
+    assert.ok(method === 0 || method === 8, `unsupported ZIP compression for ${name}`);
+    if (!name.endsWith("/")) result.set(name, method === 8 ? inflateRawSync(compressed) : compressed);
+    cursor += 46 + nameLength + extraLength + commentLength;
+  }
+  return result;
+}
 
 test("every .exe link in HTML points at a file that exists", () => {
   let checked = 0;
@@ -112,3 +152,4 @@ test("every .exe link in HTML points at a file that exists", () => {
 
   assert.ok(checked > 0, "found no installer links to verify");
 });
+

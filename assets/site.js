@@ -96,12 +96,40 @@ const selectAllLangs = $("#selectAllLangs");
 const clearAllLangs = $("#clearAllLangs");
 const langCount = $("#langCount");
 const progressSteps = $$(".progress-step");
+const previewConsent = $("#previewConsent");
+const initialResultGrid = resultGrid?.innerHTML || "";
 
 let selectedFile = null;
 let lastReport = null;
-const API_BASE = location.hostname.endsWith("vercel.app")
-  ? ""
-  : "https://formatflow-ai.vercel.app";
+let operationVersion = 0;
+let previewController = null;
+// Production and preview deployments serve their own API. Cross-origin calls
+// to the protected Vercel alias fail both CSP and deployment authentication.
+const API_BASE = "";
+
+function clearReport() {
+  operationVersion += 1;
+  previewController?.abort();
+  previewController = null;
+  lastReport = null;
+  if (downloadReport) downloadReport.disabled = true;
+  if (translatePreview) { translatePreview.disabled = true; translatePreview.textContent = "Translate preview"; }
+  if (previewConsent) previewConsent.checked = false;
+  if (translateResult) translateResult.innerHTML = "";
+  if (resultGrid) resultGrid.innerHTML = initialResultGrid;
+  if (qaList) qaList.innerHTML = "";
+  if (textPreview) textPreview.textContent = "Analyse the selected file to refresh its report.";
+  if (demoStatusTitle) demoStatusTitle.textContent = "Ready to analyse";
+  if (demoStatusText) demoStatusText.textContent = "Choose target languages, then analyse the file locally.";
+  if (runDemo) runDemo.disabled = false;
+  setProgress(0);
+}
+
+function syncPreviewControl() {
+  if (translatePreview) translatePreview.disabled = !lastReport?.preview || !previewConsent?.checked || !!previewController;
+}
+
+previewConsent?.addEventListener("change", syncPreviewControl);
 
 let jsZipPromise = null;
 let pdfJsPromise = null;
@@ -136,7 +164,7 @@ function setProgress(value) {
 
   progressSteps.forEach((step, index) => {
     const threshold = [20, 60, 100][index];
-    step.classList.toggle("is-active", value > 0 && value < threshold);
+    step.classList.toggle("is-active", value > [0, 20, 60][index] && value < threshold);
     step.classList.toggle("is-complete", value >= threshold);
   });
 }
@@ -164,13 +192,14 @@ function setAllLanguages(checked) {
     input.checked = checked;
   });
   syncLangControls();
+  clearReport();
   track(checked ? "Languages Select All" : "Languages Clear All");
 }
 
 selectAllLangs?.addEventListener("click", () => setAllLanguages(true));
 clearAllLangs?.addEventListener("click", () => setAllLanguages(false));
 languageInputs().forEach((input) =>
-  input.addEventListener("change", syncLangControls),
+  input.addEventListener("change", () => { syncLangControls(); clearReport(); }),
 );
 syncLangControls();
 
@@ -194,11 +223,9 @@ function selectFile(file) {
         ? "PDF"
         : "";
 
-  selectedFile = file;
-  lastReport = null;
-  downloadReport.disabled = true;
-  translatePreview.disabled = true;
-  translateResult.innerHTML = "";
+  clearReport();
+  selectedFile = null;
+  textPreview.textContent = "Choose a supported file to analyse.";
 
   if (!type) {
     showFile(file, "Unsupported");
@@ -211,6 +238,15 @@ function selectFile(file) {
     });
     return;
   }
+
+  if (file.size > 50 * 1024 * 1024) {
+    showFile(file, "Too large");
+    demoStatusTitle.textContent = "File exceeds the browser limit";
+    demoStatusText.textContent = "Choose a file under 50 MB, or use FormatFlow Studio for larger documents.";
+    return;
+  }
+
+  selectedFile = file;
 
   showFile(file, type);
   demoStatusTitle.textContent = "File ready";
@@ -243,15 +279,13 @@ dropZone?.addEventListener("drop", (event) => {
 });
 
 sampleDeck?.addEventListener("click", () => {
+  clearReport();
   selectedFile = {
     name: "FormatFlow_Sample_Deck.pptx",
     size: 1843200,
     sample: true,
   };
   showFile(selectedFile, "PPTX sample");
-  lastReport = null;
-  downloadReport.disabled = true;
-  translatePreview.disabled = true;
   demoStatusTitle.textContent = "Sample deck ready";
   demoStatusText.textContent =
     "Analyse the sample to preview the complete review flow.";
@@ -279,7 +313,7 @@ function loadJSZip() {
           ),
         );
       document.head.appendChild(script);
-    });
+    }).catch((error) => { jsZipPromise = null; throw error; });
   }
   return jsZipPromise;
 }
@@ -307,20 +341,23 @@ function loadPdfJs() {
           ),
         );
       document.head.appendChild(script);
-    });
+    }).catch((error) => { pdfJsPromise = null; throw error; });
   }
   return pdfJsPromise;
 }
 
 function xmlToTexts(xml) {
-  const decoded = xml
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&apos;/g, "'");
-  return [...decoded.matchAll(/<(?:a|w):t[^>]*>([\s\S]*?)<\/(?:a|w):t>/g)]
-    .map((match) => normaliseText(match[1]))
+  // Decode entities only after identifying XML text nodes. Decoding the whole
+  // XML first lets a literal </a:t> in document text truncate extraction.
+  const decode = (value) => value.replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos);/gi, (entity, name) => {
+    if (name[0] === "#") {
+      const point = name[1].toLowerCase() === "x" ? parseInt(name.slice(2), 16) : parseInt(name.slice(1), 10);
+      return point > 0 && point <= 0x10ffff && !(point >= 0xd800 && point <= 0xdfff) ? String.fromCodePoint(point) : "\uFFFD";
+    }
+    return { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" }[name.toLowerCase()];
+  });
+  return [...xml.matchAll(/<(?:a|w):t(?:\s[^>]*)?>([\s\S]*?)<\/(?:a|w):t>/g)]
+    .map((match) => normaliseText(decode(match[1])))
     .filter(Boolean);
 }
 
@@ -371,7 +408,7 @@ async function extractPptx(zip) {
 async function extractPdf(file) {
   const pdfjs = await loadPdfJs();
   const data = await file.arrayBuffer();
-  const document = await pdfjs.getDocument({ data }).promise;
+  const document = await pdfjs.getDocument({ data, isEvalSupported: false }).promise;
   const pageCap = Math.min(document.numPages, 40);
   const texts = [];
 
@@ -382,7 +419,7 @@ async function extractPdf(file) {
     if (line) texts.push(`Page ${index}: ${line}`);
   }
 
-  return {
+  const result = {
     kind: "PDF Document",
     units: document.numPages,
     unitLabel: "pages",
@@ -390,6 +427,8 @@ async function extractPdf(file) {
     pdfTruncated: document.numPages > pageCap,
     pdfScanned: texts.join("").length < document.numPages * 8,
   };
+  await document.destroy();
+  return result;
 }
 
 function buildChecks({ file, kind, units, texts, languages }) {
@@ -424,7 +463,7 @@ function makeOutputs(fileName, languages) {
   const base = fileName.replace(/\.(pptx|docx)$/i, "");
   const extension = fileName.toLowerCase().endsWith(".docx") ? "docx" : "pptx";
   return languages.map(
-    (language) => `${base}_${language.slice(0, 2).toUpperCase()}.${extension}`,
+    (language) => `${base}_${({ Spanish: "ES", French: "FR", German: "DE", Arabic: "AR" })[language] || language.replace(/[^a-z0-9-]/gi, "_")}.${extension}`,
   );
 }
 
@@ -465,8 +504,8 @@ function renderAnalysis(report) {
       <p>${report.checks.filter((check) => /fit|large|dense|risk/i.test(check)).length || 0} items flagged for review</p>
     </div>
     <div class="result-card">
-      <h4>Review pack</h4>
-      <p>${report.outputs.length ? report.outputs.map(escapeHtml).join("<br>") : "PDF analysis and QA report only"}</p>
+      <h4>Planned outputs</h4>
+      <p>${report.outputs.length ? `${report.outputs.map(escapeHtml).join("<br>")}<br>Export files in FormatFlow Studio.` : "PDF analysis and QA report only"}</p>
     </div>`;
 
   qaList.innerHTML = report.checks
@@ -476,7 +515,7 @@ function renderAnalysis(report) {
     report.preview ||
     "No extractable text was found. The file may contain scanned content or unsupported objects.";
   downloadReport.disabled = false;
-  translatePreview.disabled = !report.preview;
+  syncPreviewControl();
   setProgress(100);
 }
 
@@ -532,6 +571,7 @@ function downloadHtmlReport(report) {
 }
 
 runDemo?.addEventListener("click", async () => {
+  let version;
   try {
     if (!selectedFile) {
       demoStatusTitle.textContent = "Choose a file first";
@@ -548,6 +588,10 @@ runDemo?.addEventListener("click", async () => {
       return;
     }
 
+    const file = selectedFile;
+    clearReport();
+    version = operationVersion;
+
     runDemo.disabled = true;
     downloadReport.disabled = true;
     translatePreview.disabled = true;
@@ -556,11 +600,13 @@ runDemo?.addEventListener("click", async () => {
     demoStatusText.textContent =
       "FormatFlow is opening the document in this browser.";
 
-    if (selectedFile.sample) {
+    if (file.sample) {
       await new Promise((resolve) => window.setTimeout(resolve, 420));
+      if (version !== operationVersion) return;
       setProgress(64);
       demoStatusTitle.textContent = "Checking structure and layout";
       await new Promise((resolve) => window.setTimeout(resolve, 420));
+      if (version !== operationVersion) return;
       lastReport = sampleReport(languages);
       demoStatusTitle.textContent = "Sample analysis complete";
       demoStatusText.textContent =
@@ -570,22 +616,26 @@ runDemo?.addEventListener("click", async () => {
       return;
     }
 
-    const lower = selectedFile.name.toLowerCase();
+    const lower = file.name.toLowerCase();
     let extracted;
 
     if (lower.endsWith(".pdf")) {
       setProgress(44);
       demoStatusTitle.textContent = "Extracting PDF text and structure";
-      extracted = await extractPdf(selectedFile);
+      extracted = await extractPdf(file);
     } else {
       const JSZip = await loadJSZip();
-      const zip = await JSZip.loadAsync(selectedFile);
+      if (version !== operationVersion) return;
+      const zip = await JSZip.loadAsync(file);
+      if (version !== operationVersion) return;
       setProgress(48);
       demoStatusTitle.textContent = "Extracting document structure";
       extracted = lower.endsWith(".docx")
         ? await extractDocx(zip)
         : await extractPptx(zip);
     }
+    if (version !== operationVersion) return;
+    if (!extracted.units) throw new Error("This file does not contain the expected document structure. Check its format and try again.");
 
     setProgress(76);
     demoStatusTitle.textContent = "Running layout and QA checks";
@@ -593,7 +643,7 @@ runDemo?.addEventListener("click", async () => {
     const finalDocType =
       docType === "Auto-detect" ? extracted.kind : docType;
     const checkResult = buildChecks({
-      file: selectedFile,
+      file,
       kind: extracted.kind,
       units: extracted.units,
       texts: extracted.texts,
@@ -616,15 +666,15 @@ runDemo?.addEventListener("click", async () => {
       );
     }
 
-    const outputs = makeOutputs(selectedFile.name, languages);
+    const outputs = makeOutputs(file.name, languages);
     const preview = extracted.texts
       .slice(0, 30)
       .join("\n\n")
       .slice(0, 4500);
 
     lastReport = {
-      fileName: selectedFile.name,
-      fileSize: readableSize(selectedFile.size),
+      fileName: file.name,
+      fileSize: readableSize(file.size),
       kind: extracted.kind,
       docType: finalDocType,
       units: extracted.units,
@@ -642,13 +692,14 @@ runDemo?.addEventListener("click", async () => {
     renderAnalysis(lastReport);
     track("Tester Analyse", { type: extracted.kind });
   } catch (error) {
+    if (version !== operationVersion) return;
     console.error(error);
     demoStatusTitle.textContent = "Analysis could not finish";
     demoStatusText.textContent =
       error.message || "The file could not be analysed in this browser.";
     setProgress(0);
   } finally {
-    runDemo.disabled = false;
+    if (version === operationVersion) runDemo.disabled = false;
   }
 });
 
@@ -674,7 +725,13 @@ function renderTranslations(data) {
 }
 
 translatePreview?.addEventListener("click", async () => {
-  if (!lastReport?.preview) return;
+  if (!lastReport?.preview || !previewConsent?.checked || previewController) return;
+
+  const report = lastReport;
+  const version = operationVersion;
+  const controller = new AbortController();
+  previewController = controller;
+  const timeout = window.setTimeout(() => controller.abort(), 35_000);
 
   const originalLabel = translatePreview.textContent;
   translatePreview.disabled = true;
@@ -687,38 +744,46 @@ translatePreview?.addEventListener("click", async () => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        fileName: lastReport.fileName,
-        documentType: lastReport.docType || lastReport.kind,
+        fileName: report.fileName,
+        documentType: report.docType || report.kind,
         toneNotes: $("#toneNotes").value,
-        sourceText: lastReport.preview,
-        targetLanguages: lastReport.languages,
+        sourceText: report.preview.slice(0, 4000),
+        targetLanguages: report.languages,
         model: $("#translateModel").value,
       }),
+      signal: controller.signal,
     });
 
     const data = await response
       .json()
       .catch(() => ({ error: "Unexpected server response." }));
+    if (version !== operationVersion) return;
 
     if (
-      response.status === 500 &&
-      /OPENAI_API_KEY/i.test(data.error || "")
+      response.status === 503 || (response.status === 500 && /OPENAI_API_KEY/i.test(data.error || ""))
     ) {
       translateResult.innerHTML =
         '<p class="privacy-note">Online translation preview is not enabled on this deployment. The full workflow is available in FormatFlow Studio for Windows.</p>';
     } else if (response.status === 429) {
       translateResult.innerHTML =
-        '<p class="privacy-note">The preview rate limit has been reached. Wait a minute and try again, or use the Windows app.</p>';
+        '<p class="privacy-note">The preview rate limit has been reached. Try again later, or use the Windows app.</p>';
     } else if (!response.ok) {
       translateResult.innerHTML = `<p class="privacy-note">Preview failed: ${escapeHtml(data.error || `HTTP ${response.status}`)}.</p>`;
     } else {
       renderTranslations(data);
     }
   } catch (error) {
-    translateResult.innerHTML = `<p class="privacy-note">Could not reach the preview service: ${escapeHtml(error.message || "network error")}.</p>`;
+    if (version !== operationVersion) return;
+    translateResult.innerHTML = error.name === "AbortError"
+      ? '<p class="privacy-note">The preview timed out. Try again with a shorter document.</p>'
+      : `<p class="privacy-note">Could not reach the preview service: ${escapeHtml(error.message || "network error")}.</p>`;
   } finally {
-    translatePreview.textContent = originalLabel;
-    translatePreview.disabled = false;
+    window.clearTimeout(timeout);
+    if (previewController === controller) {
+      translatePreview.textContent = originalLabel;
+      previewController = null;
+    }
+    syncPreviewControl();
   }
 });
 
@@ -727,3 +792,4 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/service-worker.js").catch(() => {});
   });
 }
+
