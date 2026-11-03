@@ -6,7 +6,7 @@
 //   * Navigations offline: fall back to the cached home page.
 // Bump VERSION on release: activate() drops every cache from an older version,
 // so returning visitors stop being served assets from a previous deploy.
-const VERSION = "ff-v6-redesign";
+const VERSION = "ff-v7-preview-integrity";
 const STATIC_CACHE = `${VERSION}-static`;
 const PRECACHE = [
   "/",
@@ -16,6 +16,7 @@ const PRECACHE = [
   "/refund-policy.html",
   "/privacy.html",
   "/formatflow-studio.html",
+  "/indesign-plugin.html",
   "/translate-powerpoint.html",
   "/translate-word.html",
   "/chatgpt.html",
@@ -38,7 +39,7 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => !k.startsWith(VERSION)).map((k) => caches.delete(k)))
+      Promise.all(keys.filter((k) => k.startsWith("ff-") && k !== STATIC_CACHE).map((k) => caches.delete(k)))
     ).then(() => self.clients.claim())
   );
 });
@@ -55,7 +56,7 @@ self.addEventListener("fetch", (event) => {
   // Never cache installer downloads. They are multi-megabyte binaries, so
   // storing them evicts the small assets the cache exists for, and a stale
   // copy would defeat the SHA-256 we publish for the current build.
-  if (url.pathname.endsWith(".exe")) return;
+  if (/\.(exe|zip|ccx)$/i.test(url.pathname)) return;
 
   // Don't try to cache cross-origin (CDN/analytics) — let the network handle it.
   if (url.origin !== self.location.origin) return;
@@ -82,3 +83,4 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+

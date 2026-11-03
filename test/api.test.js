@@ -126,23 +126,23 @@ test("resolveModel maps menu keys to model ids", () => {
   delete process.env.OPENAI_MODEL;
   delete process.env.OPENAI_MODEL_QUALITY;
   delete process.env.OPENAI_MODEL_LATEST;
-  assert.equal(resolveModel("fast"), "gpt-4o-mini");
-  assert.equal(resolveModel("quality"), "gpt-4o");
-  assert.equal(resolveModel("latest"), "gpt-5.6");
+  assert.equal(resolveModel("fast"), "gpt-6-luna");
+  assert.equal(resolveModel("quality"), "gpt-6.1-terra");
+  assert.equal(resolveModel("latest"), "gpt-6.1-sol");
 });
 
 test("resolveModel falls back to the default for unknown or hostile input", () => {
   delete process.env.OPENAI_MODEL;
   // A caller must never be able to choose an arbitrary model with our API key.
-  for (const value of [undefined, null, "", "  ", "o1-pro", "../../admin", 42, {}, []]) {
-    assert.equal(resolveModel(value), "gpt-4o-mini");
+  for (const value of [undefined, null, "", "  ", "o1-pro", "../../admin", "constructor", "toString", "__proto__", 42, {}, []]) {
+    assert.equal(resolveModel(value), "gpt-6-luna");
   }
 });
 
 test("resolveModel accepts keys case-insensitively and trimmed", () => {
   delete process.env.OPENAI_MODEL_LATEST;
-  assert.equal(resolveModel(" LATEST "), "gpt-5.6");
-  assert.equal(resolveModel("Quality"), "gpt-4o");
+  assert.equal(resolveModel(" LATEST "), "gpt-6.1-sol");
+  assert.equal(resolveModel("Quality"), "gpt-6.1-terra");
 });
 
 test("resolveModel honours env overrides for each choice", () => {
@@ -159,6 +159,7 @@ test("resolveModel honours env overrides for each choice", () => {
 
 test("every model menu key is exposed with a label", () => {
   assert.deepEqual(Object.keys(MODEL_CHOICES), ["fast", "quality", "latest"]);
-  assert.equal(MODEL_CHOICES.latest.label, "ChatGPT 5.6");
+  assert.equal(MODEL_CHOICES.latest.label, "GPT-6.1 Sol");
   assert.ok(DEFAULT_MODEL_KEY in MODEL_CHOICES);
 });
+
