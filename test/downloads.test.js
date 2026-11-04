@@ -18,7 +18,7 @@ const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
 const PRIMARY_INSTALLER = "FormatFlowStudioInstaller.exe";
 // Kept so older download links keep working; must track the primary installer.
 const LEGACY_INSTALLER = "downloads/FormatFlow-Studio-2-Day-Trial.exe";
-const INDESIGN_PLUGIN = "downloads/FormatFlow-Translate-InDesign-v3.3.0-PREVIEW.zip";
+const INDESIGN_PLUGIN = "downloads/FormatFlow-Translate-InDesign-v3.3.4-PREVIEW.zip";
 
 const read = (rel) => readFileSync(path.join(ROOT, rel));
 const sha256 = (rel) => createHash("sha256").update(read(rel)).digest("hex").toUpperCase();
@@ -61,7 +61,7 @@ test("every checksum in checksums.txt matches its file", () => {
   }
 });
 
-test("InDesign page ships a complete 3.3.0 development preview package", () => {
+test("InDesign page ships a complete 3.3.4 development preview package", () => {
   assert.ok(existsSync(path.join(ROOT, INDESIGN_PLUGIN)), `${INDESIGN_PLUGIN} is missing`);
   const bytes = read(INDESIGN_PLUGIN);
   assert.equal(bytes.subarray(0, 2).toString("latin1"), "PK", "plugin download is not a ZIP package");
@@ -69,7 +69,7 @@ test("InDesign page ships a complete 3.3.0 development preview package", () => {
 
   const files = zipEntries(bytes);
   const manifest = JSON.parse(files.get("manifest.json").toString("utf8"));
-  assert.equal(manifest.version, "3.3.0");
+  assert.equal(manifest.version, "3.3.4");
   assert.equal(manifest.host.app, "ID");
   const panel = files.get("index.html").toString("utf8");
   for (const match of panel.matchAll(/(?:src|href)="([^"?#]+\.(?:js|css))"/g)) {
@@ -81,7 +81,7 @@ test("InDesign page ships a complete 3.3.0 development preview package", () => {
   }
 
   const html = readFileSync(path.join(ROOT, "indesign-plugin.html"), "utf8");
-  assert.match(html, /Version 3\.3\.0 development preview/i);
+  assert.match(html, /Version 3\.3\.4 development preview/i);
   assert.match(html, /still needs testing inside Adobe InDesign/i);
   assert.match(html, /Overset Text Fixer/i);
   assert.match(html, /Auto, Dark and Light themes/i);
@@ -152,4 +152,3 @@ test("every .exe link in HTML points at a file that exists", () => {
 
   assert.ok(checked > 0, "found no installer links to verify");
 });
-

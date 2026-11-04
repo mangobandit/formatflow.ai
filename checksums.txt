@@ -17,3 +17,6 @@ downloads/FormatFlow-Translate-InDesign-v3.1.0-FULL-RESTORED.zip  SHA256: 0422D0
 
 # InDesign 3.3.0 development preview: automated checks only; host testing pending.
 downloads/FormatFlow-Translate-InDesign-v3.3.0-PREVIEW.zip  SHA256: 888521A54461954E993D38C71620FBA9B60F59761274A60FE25723B7499878B5
+
+# InDesign 3.3.4 development preview: automated checks only; host testing pending.
+downloads/FormatFlow-Translate-InDesign-v3.3.4-PREVIEW.zip  SHA256: 24FA838819B0FFBFB75424E764E02CBF5859F9792F555F996732AB7602A04385
