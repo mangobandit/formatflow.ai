@@ -174,7 +174,7 @@ test("a failed reader load can be retried without refreshing the page", async ()
 test("service worker skips release archives and preserves unrelated caches", async () => {
   const handlers = {}, deleted = [];
   const context = vm.createContext({ URL, self: { location: { origin: "https://formatflow.ai" }, addEventListener: (event, callback) => { handlers[event] = callback; }, clients: { claim: async () => {} } },
-    caches: { keys: async () => ["other-app", "ff-v6-redesign-static", "ff-v7-preview-integrity-static"], delete: async (name) => { deleted.push(name); } },
+    caches: { keys: async () => ["other-app", "ff-v6-redesign-static", "ff-v7-preview-integrity-static", "ff-v8-business-package-static"], delete: async (name) => { deleted.push(name); } },
   });
   vm.runInContext(fs.readFileSync(new URL("../service-worker.js", import.meta.url), "utf8"), context);
   for (const file of ["plugin.zip", "plugin.ccx", "app.exe"]) {
@@ -183,5 +183,5 @@ test("service worker skips release archives and preserves unrelated caches", asy
   let activation;
   handlers.activate({ waitUntil(value) { activation = value; } });
   await activation;
-  assert.deepEqual(deleted, ["ff-v6-redesign-static"]);
+  assert.deepEqual(deleted, ["ff-v6-redesign-static", "ff-v7-preview-integrity-static"]);
 });

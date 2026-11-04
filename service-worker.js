@@ -6,7 +6,7 @@
 //   * Navigations offline: fall back to the cached home page.
 // Bump VERSION on release: activate() drops every cache from an older version,
 // so returning visitors stop being served assets from a previous deploy.
-const VERSION = "ff-v7-preview-integrity";
+const VERSION = "ff-v8-business-package";
 const STATIC_CACHE = `${VERSION}-static`;
 const PRECACHE = [
   "/",
@@ -83,4 +83,3 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
-
